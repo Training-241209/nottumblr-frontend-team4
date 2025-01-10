@@ -1,17 +1,19 @@
 import { SidebarLeft } from "@/components/sidebar-left"
 import { SidebarRight } from "@/components/sidebar-right"
+import Timeline from "@/components/timeline"
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-} from "@/components/ui/breadcrumb"
+} from "@/components/ui/breadcrumb" 
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+
 
 export default function MainPage() {
   return (
@@ -26,16 +28,15 @@ export default function MainPage() {
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <BreadcrumbPage className="line-clamp-1">
-                    Project Management & Task Tracking
+                    Main Page
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="mx-auto h-24 w-full max-w-3xl rounded-xl bg-neutral-100/50 dark:bg-neutral-800/50" />
-          <div className="mx-auto h-[100vh] w-full max-w-3xl rounded-xl bg-neutral-100/50 dark:bg-neutral-800/50" />
+        <div className="flex flex-1 flex-col gap-9 p-6">
+          <Timeline/>
         </div>
       </SidebarInset>
       <SidebarRight />
