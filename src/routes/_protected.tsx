@@ -1,3 +1,4 @@
+import MainPage from '@/app/dashboard/main-page'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_protected')({
@@ -5,5 +6,5 @@ export const Route = createFileRoute('/_protected')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/_protected"!</div>
+  return <MainPage />
 }
