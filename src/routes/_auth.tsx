@@ -18,7 +18,7 @@ function RouteComponent() { //<-- Route Component from above
       // If the user does exist we navigate to the dashboard
       router.navigate({ to: "/dashboard" });
     }
-  }, [auth]); //<-- Dependency is auth. We are checking auth and if auth changes is when useEffect is run. Here it's only run once.
+  }, [auth, router]); //<-- Dependency is auth. We are checking auth and if auth changes is when useEffect is run. Here it's only run once.
   return (
       <Outlet />
   );

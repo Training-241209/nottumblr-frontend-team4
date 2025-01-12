@@ -6,12 +6,14 @@ import { useRegister } from "../hooks/use-register";
 import { registerSchema, RegisterSchema } from "../schemas/register-schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "@tanstack/react-router";
 
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
   const { mutate: register, isPending } = useRegister();
+  const router = useRouter();
 
   const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
@@ -110,9 +112,12 @@ export function RegisterForm({
       </div>
       <div className="text-center text-sm dark:text-neutral-100">
         Do you have an account?     {""}
-        <a href="/auth/login" className="underline underline-offset-4">
+        <button
+          onClick={() => router.navigate({ to: "/auth/login" })}
+          className="underline underline-offset-4"
+        >
           Log In
-        </a>
+        </button>
       </div>
     </form>
   )
