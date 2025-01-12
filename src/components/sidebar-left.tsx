@@ -3,8 +3,6 @@
 import * as React from "react"
 import {
   Home,
-  Inbox,
-  Settings,
   Telescope,
   UserCog,
   Users,
@@ -20,43 +18,44 @@ import {
 import { NavUser } from "./nav-user"
 import Logo from "./logo"
 import { useAuth } from "./auth/hooks/use-auth"
+import { useRouter } from "@tanstack/react-router"
 
 // This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Home",
-      url: "/dashboard/timeline/",
-      icon: Home,
-    },
-    {
-      title: "Explore",
-      url: "/dashboard/explore/",
-      icon: Telescope,
-    },
-    {
-      title: "Commmunities",
-      url: "/dashboard/communities/",
-      icon: Users,
-    },
-    {
-      title: "Account Settings",
-      url: "/dashboard/settings/",
-      icon: UserCog,
-      badge: "10",
-    },
-  ],
+function useNavData() {
+  const router = useRouter();
+  
+  return {
+    navMain: [
+      {
+        title: "Home",
+        onClick: () => router.navigate({ to: '/dashboard/timeline' }),
+        icon: Home,
+      },
+      {
+        title: "Explore",
+        onClick: () => router.navigate({ to: '/dashboard/explore' }),
+        icon: Telescope,
+      },
+      {
+        title: "Communities",
+        onClick: () => router.navigate({ to: '/dashboard/communities' }),
+        icon: Users,
+      },
+      {
+        title: "Account Settings",
+        onClick: () => router.navigate({ to: '/dashboard/settings' }),
+        icon: UserCog,
+        badge: "10",
+      },
+    ],
+  }
 }
 
 export function SidebarLeft({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const { data : user } = useAuth();
+  const data = useNavData();
 
   return (
     <Sidebar className="dark:border-neutral-800 dark:bg-black dark:text-neutral-100" {...props}>

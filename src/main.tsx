@@ -24,7 +24,11 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-        <RouterProvider router={router} />
+      <QueryProvider>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </QueryProvider>
     </StrictMode>
   );
 }

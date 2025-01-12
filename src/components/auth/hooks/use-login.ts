@@ -26,7 +26,6 @@ export function useLogin() {
       queryClient.invalidateQueries({ // <-- invalidating what we had before..
         queryKey: ["auth"], // <---------------- with this key
       });
-      console.log("hi");
       toast.success("Logged in successfully."); //<-- logging in successfully
       router.navigate({ to: "/dashboard" }); //<-- navigating to the dashboard because we were successful
     },

@@ -22,7 +22,7 @@ const data = {
   navMain: [
     {
       title: "Search Nott",
-      url: "#",
+      onClick: () => {},
       icon: Search,
     },
   ],

@@ -13,7 +13,7 @@ export function NavMain({
 }: {
   items: {
     title: string
-    url: string
+    onClick: () => void;
     icon: LucideIcon
     isActive?: boolean
   }[]
@@ -23,10 +23,13 @@ export function NavMain({
       {items.map((item) => (
         <SidebarMenuItem key={item.title} className="hover:bg-gray-100 hover:scale-105 dark:hover:bg-gray-800 dark:hover:scale-105 transition-transform duration-200 p-2 text-base">
           <SidebarMenuButton asChild isActive={item.isActive}>
-            <a href={item.url} className="flex items-center gap-2">
+            <button 
+              onClick={item.onClick}
+              className="flex items-center gap-2 w-full text-left"
+            >
               <item.icon style={{ width: '22px', height: '50px' }} />
               <span className = "text-md">{item.title}</span>
-            </a>
+            </button>
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}

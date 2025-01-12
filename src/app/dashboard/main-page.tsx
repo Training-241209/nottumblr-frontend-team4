@@ -13,8 +13,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { memo } from "react";
 
-export default function MainPage({ children }: { children?: React.ReactNode }) {
+const MainPage = memo(({ children }: { children?: React.ReactNode }) => {
   return (
     <SidebarProvider>
       <SidebarLeft />
@@ -42,4 +43,6 @@ export default function MainPage({ children }: { children?: React.ReactNode }) {
       <SidebarRight />
     </SidebarProvider>
   );
-}
+});
+
+export default MainPage;

@@ -13,14 +13,14 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as ProtectedImport } from './routes/_protected'
 import { Route as AuthImport } from './routes/_auth'
-import { Route as ProtectedDashboardIndexImport } from './routes/_protected/dashboard/index'
+import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard/route'
 import { Route as AuthAuthRegisterImport } from './routes/_auth/auth/register'
 import { Route as AuthAuthLoginImport } from './routes/_auth/auth/login'
-import { Route as ProtectedDashboardTimelineIndexImport } from './routes/_protected/dashboard/timeline/index'
-import { Route as ProtectedDashboardSettingsIndexImport } from './routes/_protected/dashboard/settings/index'
-import { Route as ProtectedDashboardProfileIndexImport } from './routes/_protected/dashboard/profile/index'
-import { Route as ProtectedDashboardExploreIndexImport } from './routes/_protected/dashboard/explore/index'
-import { Route as ProtectedDashboardCommunitiesIndexImport } from './routes/_protected/dashboard/communities/index'
+import { Route as ProtectedDashboardTimelineRouteImport } from './routes/_protected/dashboard/timeline/route'
+import { Route as ProtectedDashboardSettingsRouteImport } from './routes/_protected/dashboard/settings/route'
+import { Route as ProtectedDashboardProfileRouteImport } from './routes/_protected/dashboard/profile/route'
+import { Route as ProtectedDashboardExploreRouteImport } from './routes/_protected/dashboard/explore/route'
+import { Route as ProtectedDashboardCommunitiesRouteImport } from './routes/_protected/dashboard/communities/route'
 
 // Create/Update Routes
 
@@ -34,9 +34,9 @@ const AuthRoute = AuthImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const ProtectedDashboardIndexRoute = ProtectedDashboardIndexImport.update({
-  id: '/dashboard/',
-  path: '/dashboard/',
+const ProtectedDashboardRouteRoute = ProtectedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => ProtectedRoute,
 } as any)
 
@@ -52,39 +52,39 @@ const AuthAuthLoginRoute = AuthAuthLoginImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 
-const ProtectedDashboardTimelineIndexRoute =
-  ProtectedDashboardTimelineIndexImport.update({
-    id: '/dashboard/timeline/',
-    path: '/dashboard/timeline/',
-    getParentRoute: () => ProtectedRoute,
+const ProtectedDashboardTimelineRouteRoute =
+  ProtectedDashboardTimelineRouteImport.update({
+    id: '/timeline',
+    path: '/timeline',
+    getParentRoute: () => ProtectedDashboardRouteRoute,
   } as any)
 
-const ProtectedDashboardSettingsIndexRoute =
-  ProtectedDashboardSettingsIndexImport.update({
-    id: '/dashboard/settings/',
-    path: '/dashboard/settings/',
-    getParentRoute: () => ProtectedRoute,
+const ProtectedDashboardSettingsRouteRoute =
+  ProtectedDashboardSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => ProtectedDashboardRouteRoute,
   } as any)
 
-const ProtectedDashboardProfileIndexRoute =
-  ProtectedDashboardProfileIndexImport.update({
-    id: '/dashboard/profile/',
-    path: '/dashboard/profile/',
-    getParentRoute: () => ProtectedRoute,
+const ProtectedDashboardProfileRouteRoute =
+  ProtectedDashboardProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => ProtectedDashboardRouteRoute,
   } as any)
 
-const ProtectedDashboardExploreIndexRoute =
-  ProtectedDashboardExploreIndexImport.update({
-    id: '/dashboard/explore/',
-    path: '/dashboard/explore/',
-    getParentRoute: () => ProtectedRoute,
+const ProtectedDashboardExploreRouteRoute =
+  ProtectedDashboardExploreRouteImport.update({
+    id: '/explore',
+    path: '/explore',
+    getParentRoute: () => ProtectedDashboardRouteRoute,
   } as any)
 
-const ProtectedDashboardCommunitiesIndexRoute =
-  ProtectedDashboardCommunitiesIndexImport.update({
-    id: '/dashboard/communities/',
-    path: '/dashboard/communities/',
-    getParentRoute: () => ProtectedRoute,
+const ProtectedDashboardCommunitiesRouteRoute =
+  ProtectedDashboardCommunitiesRouteImport.update({
+    id: '/communities',
+    path: '/communities',
+    getParentRoute: () => ProtectedDashboardRouteRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -105,6 +105,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedImport
       parentRoute: typeof rootRoute
     }
+    '/_protected/dashboard': {
+      id: '/_protected/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof ProtectedDashboardRouteImport
+      parentRoute: typeof ProtectedImport
+    }
+    '/_protected/dashboard/communities': {
+      id: '/_protected/dashboard/communities'
+      path: '/communities'
+      fullPath: '/dashboard/communities'
+      preLoaderRoute: typeof ProtectedDashboardCommunitiesRouteImport
+      parentRoute: typeof ProtectedDashboardRouteImport
+    }
+    '/_protected/dashboard/explore': {
+      id: '/_protected/dashboard/explore'
+      path: '/explore'
+      fullPath: '/dashboard/explore'
+      preLoaderRoute: typeof ProtectedDashboardExploreRouteImport
+      parentRoute: typeof ProtectedDashboardRouteImport
+    }
+    '/_protected/dashboard/profile': {
+      id: '/_protected/dashboard/profile'
+      path: '/profile'
+      fullPath: '/dashboard/profile'
+      preLoaderRoute: typeof ProtectedDashboardProfileRouteImport
+      parentRoute: typeof ProtectedDashboardRouteImport
+    }
+    '/_protected/dashboard/settings': {
+      id: '/_protected/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof ProtectedDashboardSettingsRouteImport
+      parentRoute: typeof ProtectedDashboardRouteImport
+    }
+    '/_protected/dashboard/timeline': {
+      id: '/_protected/dashboard/timeline'
+      path: '/timeline'
+      fullPath: '/dashboard/timeline'
+      preLoaderRoute: typeof ProtectedDashboardTimelineRouteImport
+      parentRoute: typeof ProtectedDashboardRouteImport
+    }
     '/_auth/auth/login': {
       id: '/_auth/auth/login'
       path: '/auth/login'
@@ -118,48 +160,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/register'
       preLoaderRoute: typeof AuthAuthRegisterImport
       parentRoute: typeof AuthImport
-    }
-    '/_protected/dashboard/': {
-      id: '/_protected/dashboard/'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof ProtectedDashboardIndexImport
-      parentRoute: typeof ProtectedImport
-    }
-    '/_protected/dashboard/communities/': {
-      id: '/_protected/dashboard/communities/'
-      path: '/dashboard/communities'
-      fullPath: '/dashboard/communities'
-      preLoaderRoute: typeof ProtectedDashboardCommunitiesIndexImport
-      parentRoute: typeof ProtectedImport
-    }
-    '/_protected/dashboard/explore/': {
-      id: '/_protected/dashboard/explore/'
-      path: '/dashboard/explore'
-      fullPath: '/dashboard/explore'
-      preLoaderRoute: typeof ProtectedDashboardExploreIndexImport
-      parentRoute: typeof ProtectedImport
-    }
-    '/_protected/dashboard/profile/': {
-      id: '/_protected/dashboard/profile/'
-      path: '/dashboard/profile'
-      fullPath: '/dashboard/profile'
-      preLoaderRoute: typeof ProtectedDashboardProfileIndexImport
-      parentRoute: typeof ProtectedImport
-    }
-    '/_protected/dashboard/settings/': {
-      id: '/_protected/dashboard/settings/'
-      path: '/dashboard/settings'
-      fullPath: '/dashboard/settings'
-      preLoaderRoute: typeof ProtectedDashboardSettingsIndexImport
-      parentRoute: typeof ProtectedImport
-    }
-    '/_protected/dashboard/timeline/': {
-      id: '/_protected/dashboard/timeline/'
-      path: '/dashboard/timeline'
-      fullPath: '/dashboard/timeline'
-      preLoaderRoute: typeof ProtectedDashboardTimelineIndexImport
-      parentRoute: typeof ProtectedImport
     }
   }
 }
@@ -178,23 +178,35 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface ProtectedDashboardRouteRouteChildren {
+  ProtectedDashboardCommunitiesRouteRoute: typeof ProtectedDashboardCommunitiesRouteRoute
+  ProtectedDashboardExploreRouteRoute: typeof ProtectedDashboardExploreRouteRoute
+  ProtectedDashboardProfileRouteRoute: typeof ProtectedDashboardProfileRouteRoute
+  ProtectedDashboardSettingsRouteRoute: typeof ProtectedDashboardSettingsRouteRoute
+  ProtectedDashboardTimelineRouteRoute: typeof ProtectedDashboardTimelineRouteRoute
+}
+
+const ProtectedDashboardRouteRouteChildren: ProtectedDashboardRouteRouteChildren =
+  {
+    ProtectedDashboardCommunitiesRouteRoute:
+      ProtectedDashboardCommunitiesRouteRoute,
+    ProtectedDashboardExploreRouteRoute: ProtectedDashboardExploreRouteRoute,
+    ProtectedDashboardProfileRouteRoute: ProtectedDashboardProfileRouteRoute,
+    ProtectedDashboardSettingsRouteRoute: ProtectedDashboardSettingsRouteRoute,
+    ProtectedDashboardTimelineRouteRoute: ProtectedDashboardTimelineRouteRoute,
+  }
+
+const ProtectedDashboardRouteRouteWithChildren =
+  ProtectedDashboardRouteRoute._addFileChildren(
+    ProtectedDashboardRouteRouteChildren,
+  )
+
 interface ProtectedRouteChildren {
-  ProtectedDashboardIndexRoute: typeof ProtectedDashboardIndexRoute
-  ProtectedDashboardCommunitiesIndexRoute: typeof ProtectedDashboardCommunitiesIndexRoute
-  ProtectedDashboardExploreIndexRoute: typeof ProtectedDashboardExploreIndexRoute
-  ProtectedDashboardProfileIndexRoute: typeof ProtectedDashboardProfileIndexRoute
-  ProtectedDashboardSettingsIndexRoute: typeof ProtectedDashboardSettingsIndexRoute
-  ProtectedDashboardTimelineIndexRoute: typeof ProtectedDashboardTimelineIndexRoute
+  ProtectedDashboardRouteRoute: typeof ProtectedDashboardRouteRouteWithChildren
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
-  ProtectedDashboardIndexRoute: ProtectedDashboardIndexRoute,
-  ProtectedDashboardCommunitiesIndexRoute:
-    ProtectedDashboardCommunitiesIndexRoute,
-  ProtectedDashboardExploreIndexRoute: ProtectedDashboardExploreIndexRoute,
-  ProtectedDashboardProfileIndexRoute: ProtectedDashboardProfileIndexRoute,
-  ProtectedDashboardSettingsIndexRoute: ProtectedDashboardSettingsIndexRoute,
-  ProtectedDashboardTimelineIndexRoute: ProtectedDashboardTimelineIndexRoute,
+  ProtectedDashboardRouteRoute: ProtectedDashboardRouteRouteWithChildren,
 }
 
 const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
@@ -203,77 +215,77 @@ const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '': typeof ProtectedRouteWithChildren
+  '/dashboard': typeof ProtectedDashboardRouteRouteWithChildren
+  '/dashboard/communities': typeof ProtectedDashboardCommunitiesRouteRoute
+  '/dashboard/explore': typeof ProtectedDashboardExploreRouteRoute
+  '/dashboard/profile': typeof ProtectedDashboardProfileRouteRoute
+  '/dashboard/settings': typeof ProtectedDashboardSettingsRouteRoute
+  '/dashboard/timeline': typeof ProtectedDashboardTimelineRouteRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
-  '/dashboard': typeof ProtectedDashboardIndexRoute
-  '/dashboard/communities': typeof ProtectedDashboardCommunitiesIndexRoute
-  '/dashboard/explore': typeof ProtectedDashboardExploreIndexRoute
-  '/dashboard/profile': typeof ProtectedDashboardProfileIndexRoute
-  '/dashboard/settings': typeof ProtectedDashboardSettingsIndexRoute
-  '/dashboard/timeline': typeof ProtectedDashboardTimelineIndexRoute
 }
 
 export interface FileRoutesByTo {
   '': typeof ProtectedRouteWithChildren
+  '/dashboard': typeof ProtectedDashboardRouteRouteWithChildren
+  '/dashboard/communities': typeof ProtectedDashboardCommunitiesRouteRoute
+  '/dashboard/explore': typeof ProtectedDashboardExploreRouteRoute
+  '/dashboard/profile': typeof ProtectedDashboardProfileRouteRoute
+  '/dashboard/settings': typeof ProtectedDashboardSettingsRouteRoute
+  '/dashboard/timeline': typeof ProtectedDashboardTimelineRouteRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
-  '/dashboard': typeof ProtectedDashboardIndexRoute
-  '/dashboard/communities': typeof ProtectedDashboardCommunitiesIndexRoute
-  '/dashboard/explore': typeof ProtectedDashboardExploreIndexRoute
-  '/dashboard/profile': typeof ProtectedDashboardProfileIndexRoute
-  '/dashboard/settings': typeof ProtectedDashboardSettingsIndexRoute
-  '/dashboard/timeline': typeof ProtectedDashboardTimelineIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_auth': typeof AuthRouteWithChildren
   '/_protected': typeof ProtectedRouteWithChildren
+  '/_protected/dashboard': typeof ProtectedDashboardRouteRouteWithChildren
+  '/_protected/dashboard/communities': typeof ProtectedDashboardCommunitiesRouteRoute
+  '/_protected/dashboard/explore': typeof ProtectedDashboardExploreRouteRoute
+  '/_protected/dashboard/profile': typeof ProtectedDashboardProfileRouteRoute
+  '/_protected/dashboard/settings': typeof ProtectedDashboardSettingsRouteRoute
+  '/_protected/dashboard/timeline': typeof ProtectedDashboardTimelineRouteRoute
   '/_auth/auth/login': typeof AuthAuthLoginRoute
   '/_auth/auth/register': typeof AuthAuthRegisterRoute
-  '/_protected/dashboard/': typeof ProtectedDashboardIndexRoute
-  '/_protected/dashboard/communities/': typeof ProtectedDashboardCommunitiesIndexRoute
-  '/_protected/dashboard/explore/': typeof ProtectedDashboardExploreIndexRoute
-  '/_protected/dashboard/profile/': typeof ProtectedDashboardProfileIndexRoute
-  '/_protected/dashboard/settings/': typeof ProtectedDashboardSettingsIndexRoute
-  '/_protected/dashboard/timeline/': typeof ProtectedDashboardTimelineIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | ''
-    | '/auth/login'
-    | '/auth/register'
     | '/dashboard'
     | '/dashboard/communities'
     | '/dashboard/explore'
     | '/dashboard/profile'
     | '/dashboard/settings'
     | '/dashboard/timeline'
+    | '/auth/login'
+    | '/auth/register'
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
-    | '/auth/login'
-    | '/auth/register'
     | '/dashboard'
     | '/dashboard/communities'
     | '/dashboard/explore'
     | '/dashboard/profile'
     | '/dashboard/settings'
     | '/dashboard/timeline'
+    | '/auth/login'
+    | '/auth/register'
   id:
     | '__root__'
     | '/_auth'
     | '/_protected'
+    | '/_protected/dashboard'
+    | '/_protected/dashboard/communities'
+    | '/_protected/dashboard/explore'
+    | '/_protected/dashboard/profile'
+    | '/_protected/dashboard/settings'
+    | '/_protected/dashboard/timeline'
     | '/_auth/auth/login'
     | '/_auth/auth/register'
-    | '/_protected/dashboard/'
-    | '/_protected/dashboard/communities/'
-    | '/_protected/dashboard/explore/'
-    | '/_protected/dashboard/profile/'
-    | '/_protected/dashboard/settings/'
-    | '/_protected/dashboard/timeline/'
   fileRoutesById: FileRoutesById
 }
 
@@ -311,13 +323,39 @@ export const routeTree = rootRoute
     "/_protected": {
       "filePath": "_protected.tsx",
       "children": [
-        "/_protected/dashboard/",
-        "/_protected/dashboard/communities/",
-        "/_protected/dashboard/explore/",
-        "/_protected/dashboard/profile/",
-        "/_protected/dashboard/settings/",
-        "/_protected/dashboard/timeline/"
+        "/_protected/dashboard"
       ]
+    },
+    "/_protected/dashboard": {
+      "filePath": "_protected/dashboard/route.tsx",
+      "parent": "/_protected",
+      "children": [
+        "/_protected/dashboard/communities",
+        "/_protected/dashboard/explore",
+        "/_protected/dashboard/profile",
+        "/_protected/dashboard/settings",
+        "/_protected/dashboard/timeline"
+      ]
+    },
+    "/_protected/dashboard/communities": {
+      "filePath": "_protected/dashboard/communities/route.tsx",
+      "parent": "/_protected/dashboard"
+    },
+    "/_protected/dashboard/explore": {
+      "filePath": "_protected/dashboard/explore/route.tsx",
+      "parent": "/_protected/dashboard"
+    },
+    "/_protected/dashboard/profile": {
+      "filePath": "_protected/dashboard/profile/route.tsx",
+      "parent": "/_protected/dashboard"
+    },
+    "/_protected/dashboard/settings": {
+      "filePath": "_protected/dashboard/settings/route.tsx",
+      "parent": "/_protected/dashboard"
+    },
+    "/_protected/dashboard/timeline": {
+      "filePath": "_protected/dashboard/timeline/route.tsx",
+      "parent": "/_protected/dashboard"
     },
     "/_auth/auth/login": {
       "filePath": "_auth/auth/login.tsx",
@@ -326,30 +364,6 @@ export const routeTree = rootRoute
     "/_auth/auth/register": {
       "filePath": "_auth/auth/register.tsx",
       "parent": "/_auth"
-    },
-    "/_protected/dashboard/": {
-      "filePath": "_protected/dashboard/index.tsx",
-      "parent": "/_protected"
-    },
-    "/_protected/dashboard/communities/": {
-      "filePath": "_protected/dashboard/communities/index.tsx",
-      "parent": "/_protected"
-    },
-    "/_protected/dashboard/explore/": {
-      "filePath": "_protected/dashboard/explore/index.tsx",
-      "parent": "/_protected"
-    },
-    "/_protected/dashboard/profile/": {
-      "filePath": "_protected/dashboard/profile/index.tsx",
-      "parent": "/_protected"
-    },
-    "/_protected/dashboard/settings/": {
-      "filePath": "_protected/dashboard/settings/index.tsx",
-      "parent": "/_protected"
-    },
-    "/_protected/dashboard/timeline/": {
-      "filePath": "_protected/dashboard/timeline/index.tsx",
-      "parent": "/_protected"
     }
   }
 }
