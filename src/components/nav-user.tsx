@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/sidebar"
 import { UserAvatar } from "./user-avatar"
 import { useLogout } from "./auth/hooks/use-logout"
+import { useRouter } from "@tanstack/react-router"
 
 export function NavUser({
   user,
@@ -35,7 +36,8 @@ export function NavUser({
   }
 }) {
   const { mutate: logout } = useLogout();
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
+  const router = useRouter();
 
   return (
     <SidebarMenu>
@@ -75,7 +77,7 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.navigate({ to: "/dashboard/profile" })}>
                 <UserRoundPen />
                 My Profile
               </DropdownMenuItem>

@@ -1,6 +1,5 @@
 import { SidebarLeft } from "@/components/sidebar-left";
 import { SidebarRight } from "@/components/sidebar-right";
-import Timeline from "@/components/timeline";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,7 +14,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-export default function MainPage() {
+export default function MainPage({ children }: { children?: React.ReactNode }) {
   return (
     <SidebarProvider>
       <SidebarLeft />
@@ -37,7 +36,7 @@ export default function MainPage() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-9 p-6 dark:text-neutral-100 dark:bg-black">
-          <Timeline />
+          {children}
         </div>
       </SidebarInset>
       <SidebarRight />

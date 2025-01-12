@@ -4,7 +4,9 @@ import * as React from "react"
 import {
   Home,
   Inbox,
+  Settings,
   Telescope,
+  UserCog,
   Users,
 } from "lucide-react"
 
@@ -29,23 +31,23 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "#",
+      url: "/dashboard/timeline/",
       icon: Home,
     },
     {
       title: "Explore",
-      url: "#",
+      url: "/dashboard/explore/",
       icon: Telescope,
     },
     {
       title: "Commmunities",
-      url: "#",
+      url: "/dashboard/communities/",
       icon: Users,
     },
     {
-      title: "Inbox",
-      url: "#",
-      icon: Inbox,
+      title: "Account Settings",
+      url: "/dashboard/settings/",
+      icon: UserCog,
       badge: "10",
     },
   ],

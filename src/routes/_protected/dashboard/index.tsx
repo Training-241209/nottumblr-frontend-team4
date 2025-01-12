@@ -1,10 +1,9 @@
-import MainPage from '@/app/dashboard/main-page'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_protected/dashboard/')({
-  component: RouteComponent,
-})
-
-function RouteComponent() {
-  return <MainPage />
-}
+  component: () => null, // No component rendered since we redirect
+  loader: async () => {
+    // Redirect to the desired route
+    return redirect({ to: '/dashboard/timeline' }); //<-- Basic Redirection using the loader function from tanstack query
+  },
+});
