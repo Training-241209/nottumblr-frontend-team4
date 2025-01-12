@@ -22,7 +22,8 @@ export function useAuth(): UseQueryResult<AuthUser> { // <-- Defining the custom
 // Whenever we use useQuery.. we use queryFn: async() => ... as part of the options
       try {
         const resp = await axiosInstance.get("/auth/me"); //<-- Navigate to the /auth/me route if it works | AWAIT function awaiting the promise of the get request
-        return resp.data; //<-- Respond with the data
+        return resp.data;
+         //<-- Respond with the data
       } catch (e) {
         console.error(e); // <-- Logging the error
         router.navigate({ to: "/auth/login" }); //<-- If the user is not authenticated we navigate to the login page
@@ -35,5 +36,4 @@ export function useAuth(): UseQueryResult<AuthUser> { // <-- Defining the custom
     refetchOnReconnect: false, // Refetches the data when the user reconnects if it was true
   });
 
-  
 }

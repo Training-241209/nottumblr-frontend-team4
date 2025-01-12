@@ -1,8 +1,6 @@
 import * as React from "react"
 import { Search } from "lucide-react"
 
-import { DatePicker } from "@/components/date-picker"
-import { NavUser } from "@/components/nav-user"
 import { NavMain } from "@/components/nav-main"
 import {
   Sidebar,
@@ -12,7 +10,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarSeparator,
 } from "@/components/ui/sidebar"
 
 // This is sample data.
@@ -37,10 +34,10 @@ export function SidebarRight({
   return (
     <Sidebar
       collapsible="none"
-      className="sticky hidden lg:flex top-0 h-svh"
+      className="sticky hidden lg:flex top-0 h-svh border-l-[1px] dark:border-neutral-800 dark:bg-black dark:text-neutral-100"
       {...props}
     >
-      <SidebarHeader className="border-b border-sidebar-border">
+      <SidebarHeader className="border-b border-sidebar-border h-12 dark:border-neutral-800 dark:bg-black dark:text-neutral-100">
         <NavMain items={data.navMain} />
       </SidebarHeader>
       <SidebarContent>
