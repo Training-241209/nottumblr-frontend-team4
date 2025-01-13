@@ -1,3 +1,4 @@
+import SettingsPage from '@/app/settings/settings-page'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_protected/dashboard/settings')({
@@ -7,7 +8,7 @@ export const Route = createFileRoute('/_protected/dashboard/settings')({
 function RouteComponent() {
   return (
     <div>
-      <h1>Account Settings Page</h1>
+      <SettingsPage />
     </div>
   )
 }
