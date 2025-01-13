@@ -23,7 +23,7 @@ const UsersProfile = () => {
         <img
           src="https://icon-library.com/images/tumblr-avatar-icon/tumblr-avatar-icon-18.jpg"
           alt="Profile"
-          className="absolute bottom-0 left-4 transform translate-y-1/2 w-40 h-40 rounded-full border-4 border-white shadow-md dark:border-neutral-800"
+          className="absolute bottom-0 left-4 transform translate-y-1/2 w-40 h-40 rounded-full shadow-md"
         />
 
         {/* Profile Details */}
