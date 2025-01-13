@@ -18,7 +18,14 @@ const UsersProfile = () => {
   return (
     <div className="min-w-[896px] max-w-4xl mx-auto">
       {/* Profile Section */}
-      <div className="relative h-64 bg-sky-400 rounded-lg shadow-lg">
+      <div
+        className="relative h-64 bg-sky-400 rounded-lg shadow-lg"
+        style={{
+            backgroundImage: "url('/fallback-cover.jpg')",
+            backgroundSize: "100% 100%",
+            backgroundPosition: "center",
+        }}
+        >
         {/* Profile Picture */}
         <img
           src="https://icon-library.com/images/tumblr-avatar-icon/tumblr-avatar-icon-18.jpg"
