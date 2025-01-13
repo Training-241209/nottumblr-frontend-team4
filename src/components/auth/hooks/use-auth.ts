@@ -6,7 +6,9 @@ interface AuthUser { // <-- Defining the shape of AuthUser and what the data wil
   email: string;
   username: string;
   roleName: string;
-  fullName: string; 
+  fullName: string;
+  firstName: string;
+  lastName: string; 
 }
 
 export function useAuth(): UseQueryResult<AuthUser> { // <-- Defining the custom hook useAuth that we used in _auth.tsx

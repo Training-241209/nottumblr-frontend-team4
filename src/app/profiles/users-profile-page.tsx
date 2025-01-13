@@ -7,9 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useAuth } from "@/components/auth/hooks/use-auth";
 
 const UsersProfile = () => {
   const [activeSection, setActiveSection] = useState("posts");
+ const { data : user } = useAuth();
 
   const showSection = (section: React.SetStateAction<string>) => {
     setActiveSection(section);
@@ -36,10 +38,10 @@ const UsersProfile = () => {
         {/* Profile Details */}
         <div className="absolute bottom-[-60px] left-[200px]">
           <h1 className="text-2xl font-bold text-black dark:text-neutral-100">
-            John Doe
+            {user?.username}
           </h1>
           <p className="text-neutral-600 dark:text-neutral-400">
-            Full Stack Developer
+            {user?.firstName} {user?.lastName}
           </p>
         </div>
       </div>
