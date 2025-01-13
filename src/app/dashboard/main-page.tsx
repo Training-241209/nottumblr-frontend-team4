@@ -20,7 +20,7 @@ const MainPage = memo(({ children }: { children?: React.ReactNode }) => {
     <SidebarProvider>
       <SidebarLeft />
       <SidebarInset>
-        <header className="border-b-[1px] border-neutral-300 dark:border-neutral-800 sticky top-0 flex h-12 shrink-0 items-center gap-2 bg-white dark:bg-black">
+        <header className="border-b-[1px] border-neutral-300 dark:border-neutral-800 sticky top-0 z-50 flex h-12 shrink-0 items-center gap-2 bg-white dark:bg-black">
           <div className="flex justify-center gap-2 md:justify-start dark:text-neutral-100 z-10">
             <SidebarTrigger />
             <ModeToggle />

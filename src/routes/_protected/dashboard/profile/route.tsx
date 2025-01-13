@@ -1,3 +1,4 @@
+import UsersProfile from '@/app/profiles/users-profile-page'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_protected/dashboard/profile')({
@@ -7,7 +8,7 @@ export const Route = createFileRoute('/_protected/dashboard/profile')({
 function RouteComponent() {
   return (
     <div>
-      <h1>Profile Page</h1>
+      <UsersProfile />
     </div>
   )
 }

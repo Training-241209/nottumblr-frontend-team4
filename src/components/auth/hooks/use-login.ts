@@ -30,7 +30,7 @@ export function useLogin() {
       router.navigate({ to: "/dashboard" }); //<-- navigating to the dashboard because we were successful
     },
     onError: () => {
-      toast.error("Failed to login.");
+      toast.error("Failed to login. Invalid credentials.");
     },
   });
 }
