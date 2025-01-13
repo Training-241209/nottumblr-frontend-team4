@@ -1,4 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
+import { 
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle, } from "./ui/card";
 
 // Define the types for the timeline item
 interface TimelineItem {
@@ -56,15 +63,25 @@ const Timeline: React.FC = () => {
             key={item.id}
             className="p-2 bg-gray-800 shadow rounded-lg flex items-start space-x-4"
           >
-            <img
-              src={item.avatarUrl}
-              alt="Avatar"
-              className="w-12 h-12 rounded-full"
-            />
-            <div className="flex-1">
-              <h3 className="text-white font-semibold">{item.title}</h3>
-              <p className="text-white">{item.body}</p>
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle><h3 className="text-white font-semibold min-w-[830px] max-w-[830px] mx-auto">{item.title}</h3></CardTitle>
+                  <CardDescription><img
+                    src={item.avatarUrl}
+                    alt="Avatar"
+                    className="w-12 h-12 rounded-full"
+                    
+                  />
+                  
+                  </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-white">{item.body}</p>
+              </CardContent>
+              <CardFooter>
+                <p>Card Footer</p>
+              </CardFooter>
+            </Card>
           </div>
         ))}
       </div>
