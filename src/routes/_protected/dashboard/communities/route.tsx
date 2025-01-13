@@ -1,3 +1,4 @@
+import CommunityGrid from '@/app/communities/community-page'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_protected/dashboard/communities')({
@@ -7,7 +8,7 @@ export const Route = createFileRoute('/_protected/dashboard/communities')({
 function RouteComponent() {
   return (
     <div>
-      <h1>Communities Page</h1>
+      <CommunityGrid />
     </div>
   )
 }
