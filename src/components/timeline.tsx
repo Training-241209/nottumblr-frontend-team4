@@ -63,23 +63,25 @@ const Timeline: React.FC = () => {
   }, [loading]);
 
   return (
-    <div className="min-w-[896px] max-w-4xl mx-auto">
+    <div className="min-w-[600px] max-w-2xl mx-auto">
+      {" "}
+      {/* Changed from min-w-[896px] max-w-4xl */}
       <div className="space-y-6">
+        {" "}
+        {/* Changed from space-y-6 to reduce vertical spacing */}
         {items.map((item) => (
-
           <PostCard
             key={item.id}
-            creatorName="John Doe" 
-            username="johndoe"    
+            creatorName="John Doe"
+            username="johndoe"
             title={item.title}
-            body='/lbj.png'
+            body="/lbj.png"
             avatarUrl={item.avatarUrl}
-            comments={[]} 
+            comments={[]}
             onProfileClick={(username) => {
-              router.navigate({ to: '/dashboard/profile' }); // right now it navigates to profile .. needs to go to user's profile
+              router.navigate({ to: "/dashboard/profile" }); // right now it navigates to profile .. needs to go to user's profile
             }}
           />
-
         ))}
       </div>
       {loading && <div className="text-center py-4 text-white">Loading...</div>}
