@@ -188,33 +188,41 @@ export default function SettingsPage() {
         </div>
 
         <div className="space-y-6">
-          <h2 className="text-lg font-semibold">Change Password</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="current-password">Current Password</Label>
-              <Input
-                id="current-password"
-                placeholder="Enter your current password"
-                type="password"
-              />
-            </div>
-            <div>
-              <Label htmlFor="new-password">New Password</Label>
-              <Input
-                id="new-password"
-                placeholder="Enter your new password"
-                type="password"
-              />
-            </div>
-            <div>
-              <Label htmlFor="confirm-password">Confirm Password</Label>
-              <Input
-                id="confirm-password"
-                placeholder="Confirm your new password"
-                type="password"
-              />
-            </div>
-          </div>
+          <Label className="block text-lg font-medium">Change Password</Label>
+            <ul className="space-y-6 list-none">
+              {/* Current Password */}
+              <li className="space-y-1">
+                <Label htmlFor="current-password">Current Password</Label>
+                <Input
+                  id="current-password"
+                  placeholder="Enter your current password"
+                  type="password"
+                  className="w-full"
+                />
+              </li>
+
+              {/* New Password */}
+              <li className="space-y-1">
+                <Label htmlFor="new-password">New Password</Label>
+                <Input
+                  id="new-password"
+                  placeholder="Enter your new password"
+                  type="password"
+                  className="w-full"
+                />
+              </li>
+
+              {/* Confirm Password */}
+              <li className="space-y-1">
+                <Label htmlFor="confirm-password">Confirm Password</Label>
+                <Input
+                  id="confirm-password"
+                  placeholder="Confirm your new password"
+                  type="password"
+                  className="w-full"
+                />
+              </li>
+            </ul>
         </div>
       </div>
 

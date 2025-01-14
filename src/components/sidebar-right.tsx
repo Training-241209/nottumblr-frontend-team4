@@ -58,7 +58,7 @@ export function SidebarRight({
         <SidebarMenu>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="!bg-blue-500 text-white hover:!bg-blue-700">
+              <Button variant="outline" className="!bg-white text-black hover:!bg-sky-300">
                 Create Post
               </Button>
             </DialogTrigger>
