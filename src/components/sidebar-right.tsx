@@ -1,16 +1,29 @@
-import * as React from "react"
-import { Search } from "lucide-react"
+import * as React from "react";
+import { Search } from "lucide-react";
 
-import { NavMain } from "@/components/nav-main"
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+import { NavMain } from "@/components/nav-main";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 // This is sample data.
 const data = {
@@ -26,7 +39,7 @@ const data = {
       icon: Search,
     },
   ],
-}
+};
 
 export function SidebarRight({
   ...props
@@ -40,18 +53,47 @@ export function SidebarRight({
       <SidebarHeader className="border-b border-sidebar-border h-12 dark:border-neutral-800 dark:bg-black dark:text-neutral-100">
         <NavMain items={data.navMain} />
       </SidebarHeader>
-      <SidebarContent>
-        
-      </SidebarContent>
+      <SidebarContent></SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton>
-              <span>REPLACE ME</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="!bg-blue-500 text-white hover:!bg-blue-700">
+                Create Post
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md text-white min-w-[830px] max-w-[830px] min-h-[830px] max-h-[830px]">
+              <DialogHeader>
+                <DialogTitle>Create Post</DialogTitle>
+                <DialogDescription>
+                  Write a post, ask a question, share a link, and more.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex items-center space-x-2">
+                <div className="grid flex-1 gap-2">
+                  <div className="grid w-full gap-1.5">
+                    <Textarea
+                      className="resize-none w-full min-h-[650px] max-h-[650px]"
+                      placeholder="Type your message here."
+                      id="message-2"
+                    />
+                  </div>
+                </div>
+              </div>
+              <DialogFooter className="sm:justify-end">
+                <DialogClose asChild>
+                  <Button type="submit">Post</Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button type="button" variant="secondary">
+                    Cancel
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

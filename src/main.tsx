@@ -8,6 +8,11 @@ import { routeTree } from "./routeTree.gen";
 import { ThemeProvider } from "./components/ui/theme-provider";
 import QueryProvider from "./providers/query-provider";
 
+import { Amplify } from 'aws-amplify';
+import amplifyconfig from './amplifyconfiguration.json';
+
+Amplify.configure(amplifyconfig);
+
 // Create a new router instance
 const router = createRouter({ routeTree });
 

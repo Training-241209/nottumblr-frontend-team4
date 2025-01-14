@@ -17,6 +17,13 @@ const UsersProfile = () => {
     setActiveSection(section);
   };
 
+  const BUCKET_NAME = "profilepicturesfbe74-dev";
+  const BUCKET_REGION = "us-east-1";
+
+  const profilePictureUrl = user?.profilePictureUrl
+    ? `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${user.profilePictureUrl}`
+    : "lbj.png"; // Fallback image
+
   return (
     <div className="min-w-[896px] max-w-4xl mx-auto">
       {/* Profile Section */}
@@ -30,7 +37,7 @@ const UsersProfile = () => {
         >
         {/* Profile Picture */}
         <img
-          src="https://icon-library.com/images/tumblr-avatar-icon/tumblr-avatar-icon-18.jpg"
+          src={profilePictureUrl}
           alt="Profile"
           className="absolute bottom-0 left-4 transform translate-y-1/2 w-40 h-40 rounded-full shadow-md"
         />

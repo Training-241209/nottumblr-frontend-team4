@@ -9,6 +9,7 @@ interface AuthUser { // <-- Defining the shape of AuthUser and what the data wil
   fullName: string;
   firstName: string;
   lastName: string; 
+  profilePictureUrl: string;
 }
 
 export function useAuth(): UseQueryResult<AuthUser> { // <-- Defining the custom hook useAuth that we used in _auth.tsx
@@ -24,6 +25,7 @@ export function useAuth(): UseQueryResult<AuthUser> { // <-- Defining the custom
 // Whenever we use useQuery.. we use queryFn: async() => ... as part of the options
       try {
         const resp = await axiosInstance.get("/auth/me"); //<-- Navigate to the /auth/me route if it works | AWAIT function awaiting the promise of the get request
+        console.log("API Response:", resp.data);
         return resp.data;
          //<-- Respond with the data
       } catch (e) {

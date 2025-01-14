@@ -1,0 +1,29 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-nottumblr-dev-fbe74-authRole",
+      "UnauthRoleArn": "arn:aws:iam::302421151207:role/amplify-nottumblr-dev-fbe74-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::302421151207:role/amplify-nottumblr-dev-fbe74-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-nottumblr-dev-fbe74-deployment",
+      "UnauthRoleName": "amplify-nottumblr-dev-fbe74-unauthRole",
+      "StackName": "amplify-nottumblr-dev-fbe74",
+      "StackId": "arn:aws:cloudformation:us-east-1:302421151207:stack/amplify-nottumblr-dev-fbe74/3a5a7290-d1fa-11ef-bae5-0affe71a3377",
+      "AmplifyAppId": "d1ydk1eav6xe2f"
+    },
+    "categories": {
+      "auth": {
+        "nottumblr4293d1eb": {}
+      },
+      "function": {
+        "S3Triggere63d7252": {
+          "deploymentBucketName": "amplify-nottumblr-dev-fbe74-deployment",
+          "s3Key": "amplify-builds/S3Triggere63d7252-4366596a49554a433277-build.zip"
+        }
+      },
+      "storage": {
+        "nottumblrProfilePictures": {}
+      }
+    }
+  }
+}
