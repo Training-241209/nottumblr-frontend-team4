@@ -24,6 +24,8 @@ import {
   SidebarHeader,
   SidebarMenu,
 } from "@/components/ui/sidebar";
+import CreatePostDialog from "./posts-dialog";
+import { useState } from "react";
 
 // This is sample data.
 const data = {
@@ -44,6 +46,16 @@ const data = {
 export function SidebarRight({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
+  const [items, setItems] = useState<Array<{
+    id: number;
+    creatorName: string;
+    username: string;
+    title: string;
+    body: string;
+    avatarUrl: string;
+    comments: string[];
+  }>>([]);
+  
   return (
     <Sidebar
       collapsible="none"
@@ -56,42 +68,12 @@ export function SidebarRight({
       <SidebarContent></SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="!bg-white text-black hover:!bg-sky-300">
-                Create Post
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md text-white min-w-[830px] max-w-[830px] min-h-[830px] max-h-[830px]">
-              <DialogHeader>
-                <DialogTitle>Create Post</DialogTitle>
-                <DialogDescription>
-                  Write a post, ask a question, share a link, and more.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex items-center space-x-2">
-                <div className="grid flex-1 gap-2">
-                  <div className="grid w-full gap-1.5">
-                    <Textarea
-                      className="resize-none w-full min-h-[650px] max-h-[650px]"
-                      placeholder="Type your message here."
-                      id="message-2"
-                    />
-                  </div>
-                </div>
-              </div>
-              <DialogFooter className="sm:justify-end">
-                <DialogClose asChild>
-                  <Button type="submit">Post</Button>
-                </DialogClose>
-                <DialogClose asChild>
-                  <Button type="button" variant="secondary">
-                    Cancel
-                  </Button>
-                </DialogClose>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+        <CreatePostDialog 
+            onCreatePost={(newPost) => {
+              // Add the new post to your items array
+              setItems(prev => [newPost, ...prev]);
+            }} 
+          />
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

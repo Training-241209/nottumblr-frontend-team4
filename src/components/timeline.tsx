@@ -7,6 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import PostCard from "./posts/posts-card";
+import { useRouter } from "@tanstack/react-router";
 
 // Define the types for the timeline item
 interface TimelineItem {
@@ -20,6 +22,7 @@ const Timeline: React.FC = () => {
   const [items, setItems] = useState<TimelineItem[]>([]); // State for timeline items
   const [loading, setLoading] = useState<boolean>(false); // Loading state
   const bottomRef = useRef<HTMLDivElement>(null); // Ref to detect scroll position
+  const router = useRouter();
 
   // Simulated data fetch (replace with real API call)
   const fetchData = () => {
@@ -64,28 +67,18 @@ const Timeline: React.FC = () => {
       <div className="space-y-6">
         {items.map((item) => (
 
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  <h3 className="text-white font-semibold min-w-[830px] max-w-[830px] mx-auto">
-                    {item.title}
-                  </h3>
-                </CardTitle>
-                <CardDescription>
-                  <img
-                    src={item.avatarUrl}
-                    alt="Avatar"
-                    className="w-12 h-12 rounded-full"
-                  />
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-white">{item.body}</p>
-              </CardContent>
-              <CardFooter>
-                <p>Card Footer</p>
-              </CardFooter>
-            </Card>
+          <PostCard
+            key={item.id}
+            creatorName="John Doe" 
+            username="johndoe"    
+            title={item.title}
+            body='/lbj.png'
+            avatarUrl={item.avatarUrl}
+            comments={[]} 
+            onProfileClick={(username) => {
+              router.navigate({ to: '/dashboard/profile' }); // right now it navigates to profile .. needs to go to user's profile
+            }}
+          />
 
         ))}
       </div>
