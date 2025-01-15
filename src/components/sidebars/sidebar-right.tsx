@@ -50,7 +50,7 @@ export function SidebarRight({
       className="sticky hidden lg:flex top-0 h-svh border-l-[1px] dark:border-neutral-800 dark:bg-black dark:text-neutral-100"
       {...props}
     >
-      <SidebarHeader className="border-b border-sidebar-border h-12 dark:border-neutral-800 dark:bg-black dark:text-neutral-100">
+      <SidebarHeader >
 
       </SidebarHeader>
       <SidebarContent className="p-4">
