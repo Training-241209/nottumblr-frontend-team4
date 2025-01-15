@@ -1,6 +1,6 @@
 import { ModeToggle } from "@/components/ui/mode-toggle"
 import { RegisterForm } from "@/components/auth/components/register-form.tsx"
-import Logo from "@/components/logo"
+import Logo from "@/components/sidebars/logo"
 
 export default function RegisterPage() {
   return (

@@ -1,17 +1,16 @@
 import React, { useState } from "react";
+import { useAuth } from "@/components/auth/hooks/use-auth"; // For user authentication
+import PersonalTimeline from  "@/components/timelines/personal-page-timeline"; // Import PersonalTimeline
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useAuth } from "@/components/auth/hooks/use-auth";
 
 const UsersProfile = () => {
   const [activeSection, setActiveSection] = useState("posts");
- const { data : user } = useAuth();
+  const { data: user } = useAuth();
 
   const showSection = (section: React.SetStateAction<string>) => {
     setActiveSection(section);
@@ -30,11 +29,11 @@ const UsersProfile = () => {
       <div
         className="relative h-64 bg-sky-400 rounded-lg shadow-lg"
         style={{
-            backgroundImage: "url('/fallback-cover.jpg')",
-            backgroundSize: "100% 100%",
-            backgroundPosition: "center",
+          backgroundImage: "url('/fallback-cover.jpg')",
+          backgroundSize: "100% 100%",
+          backgroundPosition: "center",
         }}
-        >
+      >
         {/* Profile Picture */}
         <img
           src={profilePictureUrl}
@@ -86,27 +85,7 @@ const UsersProfile = () => {
       {/* Content Sections */}
       <div className="mr-10">
         <div className="mt-8 flex flex-col space-y-5">
-          {activeSection === "posts" &&
-            [1, 2].map((item) => (
-              <Card
-                key={item}
-                className="bg-white shadow-md h-64 w-96 max-w-lg mx-auto flex flex-col"
-              >
-                <CardHeader>
-                  <CardTitle>Post Title {item}</CardTitle>
-                  <CardDescription>Description for post {item}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-1">
-                  <p>
-                    This is the content of post {item}. It can include text,
-                    links, or images.
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <p>Footer for post {item}</p>
-                </CardFooter>
-              </Card>
-            ))}
+          {activeSection === "posts" && <PersonalTimeline />} {/* Render PersonalTimeline */}
           {activeSection === "follows" &&
             [1, 2].map((user) => (
               <Card

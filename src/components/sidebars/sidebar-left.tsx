@@ -8,7 +8,7 @@ import {
   Users,
 } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
+import { NavMain } from "@/components/sidebars/nav-main"
 import {
   Sidebar,
   SidebarContent,
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/sidebar"
 import { NavUser } from "./nav-user"
 import Logo from "./logo"
-import { useAuth } from "./auth/hooks/use-auth"
+import { useAuth } from "../auth/hooks/use-auth"
 import { useRouter } from "@tanstack/react-router"
 
 // This is sample data.

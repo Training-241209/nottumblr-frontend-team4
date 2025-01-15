@@ -1,4 +1,4 @@
-import Timeline from '@/components/timeline'
+import Timeline from '@/components/timelines/main-page-timeline'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_protected/dashboard/timeline')({

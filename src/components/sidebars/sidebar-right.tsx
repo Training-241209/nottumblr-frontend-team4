@@ -1,22 +1,6 @@
 import * as React from "react";
 import { Search } from "lucide-react";
-
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
-import { NavMain } from "@/components/nav-main";
+import { NavMain } from "@/components/sidebars/nav-main";
 import {
   Sidebar,
   SidebarContent,
@@ -24,7 +8,7 @@ import {
   SidebarHeader,
   SidebarMenu,
 } from "@/components/ui/sidebar";
-import CreatePostDialog from "./posts-dialog";
+import CreatePostDialog from "../posts/create-posts-dialog";
 import { useState } from "react";
 
 // This is sample data.

@@ -3,42 +3,34 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth/hooks/use-auth";
 import { useState, useRef, useEffect } from "react";
-import { uploadData } from "aws-amplify/storage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios-config";
+
+const BUCKET_NAME = "profilepicturesfbe74-dev";
+const BUCKET_REGION = "us-east-1";
+const BUCKET_URL = `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com`;
 
 export default function SettingsPage() {
   const { data: user } = useAuth();
   const queryClient = useQueryClient();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const BUCKET_NAME = "profilepicturesfbe74-dev";
-  const BUCKET_REGION = "us-east-1";
-
-  // Initialize avatar from localStorage or user.profilePictureUrl
-  const [avatar, setAvatar] = useState<string | undefined>(() => {
-    const savedAvatar = localStorage.getItem("avatar");
-    return (
-      savedAvatar ||
-      (user?.profilePictureUrl
-        ? `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${user.profilePictureUrl}`
-        : undefined) 
-    );
-  });
-
+  const [avatar, setAvatar] = useState<string | undefined>(undefined);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Update avatar state and localStorage when user.profilePictureUrl changes
+  // Fetch and set avatar on load
   useEffect(() => {
     if (user?.profilePictureUrl) {
-      const fullS3Url = `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${user.profilePictureUrl}`;
-      setAvatar(fullS3Url);
-      localStorage.setItem("avatar", fullS3Url);
+      const imageUrl = `${BUCKET_URL}/${user.profilePictureUrl}`;
+
+      // Preload avatar before setting it
+      const img = new Image();
+      img.src = imageUrl;
+      img.onload = () => setAvatar(imageUrl);
     }
   }, [user?.profilePictureUrl]);
 
-  // Mutation for updating profile picture
+  // Mutation for updating profile picture URL in the database
   const updateProfilePictureMutation = useMutation({
     mutationFn: async (profilePictureUrl: string) => {
       const response = await axiosInstance.put("/bloggers/profile-picture", {
@@ -68,31 +60,34 @@ export default function SettingsPage() {
     try {
       setIsUploading(true);
 
-      // Generate a unique file name using timestamp
+      // Generate a unique file name
       const fileExtension = file.name.split(".").pop();
       const fileName = `profile-pictures/${user?.username || "user"}-${Date.now()}.${fileExtension}`;
 
-      // Upload to S3 using uploadData
-      const result = await uploadData({
-        path: `public/${fileName}`,
-        data: file,
-        options: {
-          contentType: file.type,
+      // Construct the upload URL
+      const uploadUrl = `${BUCKET_URL}/${fileName}`;
+
+      // Upload directly to S3 via a PUT request
+      const response = await fetch(uploadUrl, {
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": file.type,
         },
-      }).result;
+      });
 
-      const dbPath = `public/${fileName}`;
-      const fullS3Url = `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${dbPath}`;
+      if (!response.ok) {
+        throw new Error(`Failed to upload: ${response.statusText}`);
+      }
 
-      // Update avatar and save to localStorage
-      setAvatar(fullS3Url);
-      localStorage.setItem("avatar", fullS3Url);
+      // Update the avatar state with the new URL
+      setAvatar(uploadUrl);
 
-      // Update database with storage path
-      await updateProfilePictureMutation.mutateAsync(dbPath);
+      // Update database with the new profile picture URL
+      await updateProfilePictureMutation.mutateAsync(fileName);
     } catch (error) {
       console.error("Error uploading profile picture:", error);
-      alert("Failed to update profile picture. Please try again.");
+      alert("Failed to upload profile picture. Please try again.");
     } finally {
       setIsUploading(false);
     }
@@ -103,19 +98,20 @@ export default function SettingsPage() {
       <header className="space-y-1.5">
         <div className="flex items-center space-x-4">
           {/* User Avatar */}
-          <img
-            src={avatar || "/lbj.png"} // Fallback to /lbj.png
-            width="96"
-            height="96"
-            className="border rounded-full cursor-pointer"
-            style={{ aspectRatio: "96/96", objectFit: "cover" }}
-            alt="User Avatar"
-            onClick={toggleModal}
-            onError={(e) => {
-              console.error("Image failed to load:", avatar);
-              e.currentTarget.src = "/lbj.png"; // Fallback image
-            }}
-          />
+          {avatar ? (
+            <img
+              src={avatar}
+              alt="User Avatar"
+              className="w-40 h-40 rounded-full shadow-md cursor-pointer object-cover"
+              onClick={toggleModal}
+            />
+          ) : isUploading ? (
+            <div className="w-40 h-40 rounded-full bg-gray-300 flex items-center justify-center text-gray-500">
+              Uploading...
+            </div>
+          ) : (
+            <div className="w-40 h-40 rounded-full bg-gray-300"></div>
+          )}
 
           {/* Hidden file input */}
           <input
@@ -126,7 +122,7 @@ export default function SettingsPage() {
             onChange={handleProfilePictureChange}
           />
 
-          {/* User Name and Info */}
+          {/* User Info */}
           <div className="space-y-1.5">
             <h1 className="text-2xl font-bold">
               {user?.firstName} {user?.lastName}
@@ -138,21 +134,22 @@ export default function SettingsPage() {
           <Button
             variant="secondary"
             size="sm"
-            className="ml-4"
             onClick={handleUploadClick}
-            disabled={isUploading || updateProfilePictureMutation.isPending}
+            disabled={
+              isUploading || updateProfilePictureMutation.status === "pending"
+            }
           >
             {isUploading
               ? "Uploading..."
-              : updateProfilePictureMutation.isPending
-              ? "Saving..."
-              : "Change Profile Picture"}
+              : updateProfilePictureMutation.status === "pending"
+                ? "Saving..."
+                : "Change Profile Picture"}
           </Button>
         </div>
       </header>
 
       {/* Modal */}
-      {isModalOpen && (
+      {isModalOpen && avatar && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75">
           <div className="relative">
             <img
@@ -189,49 +186,41 @@ export default function SettingsPage() {
 
         <div className="space-y-6">
           <Label className="block text-lg font-medium">Change Password</Label>
-            <ul className="space-y-6 list-none">
-              {/* Current Password */}
-              <li className="space-y-1">
-                <Label htmlFor="current-password">Current Password</Label>
-                <Input
-                  id="current-password"
-                  placeholder="Enter your current password"
-                  type="password"
-                  className="w-full"
-                />
-              </li>
-
-              {/* New Password */}
-              <li className="space-y-1">
-                <Label htmlFor="new-password">New Password</Label>
-                <Input
-                  id="new-password"
-                  placeholder="Enter your new password"
-                  type="password"
-                  className="w-full"
-                />
-              </li>
-
-              {/* Confirm Password */}
-              <li className="space-y-1">
-                <Label htmlFor="confirm-password">Confirm Password</Label>
-                <Input
-                  id="confirm-password"
-                  placeholder="Confirm your new password"
-                  type="password"
-                  className="w-full"
-                />
-              </li>
-            </ul>
+          <ul className="space-y-6 list-none">
+            <li className="space-y-1">
+              <Label htmlFor="current-password">Current Password</Label>
+              <Input
+                id="current-password"
+                placeholder="Enter your current password"
+                type="password"
+                className="w-full"
+              />
+            </li>
+            <li className="space-y-1">
+              <Label htmlFor="new-password">New Password</Label>
+              <Input
+                id="new-password"
+                placeholder="Enter your new password"
+                type="password"
+                className="w-full"
+              />
+            </li>
+            <li className="space-y-1">
+              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <Input
+                id="confirm-password"
+                placeholder="Confirm your new password"
+                type="password"
+                className="w-full"
+              />
+            </li>
+          </ul>
         </div>
       </div>
 
       <div className="mt-8 flex justify-between">
         <Button size="lg">Save</Button>
-        <Button
-          size="lg"
-          className="!bg-red-600 !text-white hover:!bg-red-700"
-        >
+        <Button size="lg" className="!bg-red-600 !text-white hover:!bg-red-700">
           Delete Account
         </Button>
       </div>

@@ -1,5 +1,5 @@
 import { LoginForm } from "@/components/auth/components/login-form";
-import Logo from "@/components/logo";
+import Logo from "@/components/sidebars/logo";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 
 export default function LoginPage() {

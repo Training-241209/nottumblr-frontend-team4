@@ -24,7 +24,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { UserAvatar } from "./user-avatar"
-import { useLogout } from "./auth/hooks/use-logout"
+import { useLogout } from "../auth/hooks/use-logout"
 import { useRouter } from "@tanstack/react-router"
 
 export function NavUser({

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';  // Removed useState for title
 import { Paperclip } from 'lucide-react';
 import {
   Dialog,
@@ -13,29 +13,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/components/auth/hooks/use-auth";
-import { uploadData } from "aws-amplify/storage";
+import { useS3Upload } from "@/components/auth/hooks/use-s3-upload";
+import { useCreatePost } from "@/components/posts/hooks/use-create-posts";
+import { toast } from "sonner";
 
-interface CreatePostDialogProps {
-  onCreatePost: (post: {
-    id: number;
-    creatorName: string;
-    username: string;
-    title: string;
-    body: string;
-    avatarUrl: string;
-    comments: string[];
-  }) => void;
-}
-
-const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ onCreatePost }) => {
+const CreatePostDialog: React.FC = () => {
   const { data: user } = useAuth();
-  const [title, setTitle] = useState('');
+  const { uploadToS3, isUploading } = useS3Upload();
+  const { mutate: createPost, status } = useCreatePost();
   const [content, setContent] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const BUCKET_NAME = "profilepicturesfbe74-dev";
-  const BUCKET_REGION = "us-east-1";
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -46,53 +34,31 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ onCreatePost }) => 
     if (!file) return;
 
     try {
-      setIsUploading(true);
-
-      // Generate a unique file name using timestamp
-      const fileExtension = file.name.split(".").pop();
-      const fileName = `post-images/${user?.username || "user"}-${Date.now()}.${fileExtension}`;
-
-      // Upload to S3 using uploadData
-      const result = await uploadData({
-        path: `public/${fileName}`,
-        data: file,
-        options: {
-          contentType: file.type,
-        },
-      }).result;
-
-      const dbPath = `public/${fileName}`;
-      const fullS3Url = `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${dbPath}`;
-
-      // Set the content to the image URL
-      setContent(fullS3Url);
-
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      alert("Failed to upload image. Please try again.");
-    } finally {
-      setIsUploading(false);
+      const uploadedUrl = await uploadToS3(file, "post-images");
+      setImageUrl(uploadedUrl);
+    } catch {
+      // Error handling is already done in the S3 hook
     }
   };
 
   const handleSubmit = () => {
-    if (!title.trim() && !content.trim()) return;
+    if (!content.trim() && !imageUrl.trim()) {
+      toast.error("Content or an image is required.");
+      return;
+    }
 
-    onCreatePost({
-      id: Date.now(),
-      creatorName: `${user?.firstName} ${user?.lastName}` || "Anonymous",
-      username: user?.username || "anonymous",
-      title: title.trim(),
-      body: content.trim(),
-      avatarUrl: user?.profilePictureUrl ? 
-        `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${user.profilePictureUrl}` : 
-        "/lbj.png",
-      comments: []
+    createPost({
+      content: content.trim(),
+      mediaUrl: imageUrl || null,
+      mediaType: imageUrl ? "image" : null,
     });
 
-    setTitle('');
+    // Reset fields after submission
     setContent('');
+    setImageUrl('');
   };
+
+  const isPosting = status === "pending";
 
   return (
     <Dialog>
@@ -105,24 +71,19 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ onCreatePost }) => 
         <DialogHeader>
           <DialogTitle>Create Post</DialogTitle>
           <DialogDescription>
-            Write a post, ask a question, share a link, and more.
+            Write a post, upload an image, or do both!
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col space-y-4">
+          {/* Removed title textarea */}
           <div className="flex items-center justify-between">
-            <Textarea
-              placeholder="Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="resize-none h-16 flex-1"
-            />
             <Button
               variant="ghost"
               size="sm"
               className="ml-2 flex items-center gap-2 whitespace-nowrap"
               onClick={handleUploadClick}
-              disabled={isUploading}
+              disabled={isUploading || isPosting}
             >
               <Paperclip className="h-5 w-5" />
               {isUploading ? "Uploading..." : "Upload Image"}
@@ -137,18 +98,18 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ onCreatePost }) => 
             onChange={handleImageUpload}
           />
 
-          {content && content.match(/\.(jpg|jpeg|png|gif)$/) && (
+          {imageUrl && (
             <div className="relative w-full h-64 bg-neutral-900 rounded-lg overflow-hidden">
-              <img 
-                src={content} 
-                alt="Upload preview" 
+              <img
+                src={imageUrl}
+                alt="Uploaded preview"
                 className="w-full h-full object-contain"
               />
               <Button
                 variant="destructive"
                 size="sm"
                 className="absolute top-2 right-2"
-                onClick={() => setContent('')}
+                onClick={() => setImageUrl('')}
               >
                 Remove
               </Button>
@@ -157,9 +118,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ onCreatePost }) => 
 
           <Textarea
             className={`resize-none w-full ${
-              content && content.match(/\.(jpg|jpeg|png|gif)$/)
-                ? "min-h-[250px] max-h-[250px]"
-                : "min-h-[550px] max-h-[550px]"
+              imageUrl ? "min-h-[250px] max-h-[250px]" : "min-h-[550px] max-h-[550px]"
             }`}
             placeholder="What's on your mind?"
             value={content}
@@ -174,12 +133,12 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ onCreatePost }) => 
             </Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               onClick={handleSubmit}
-              disabled={isUploading || (!title.trim() && !content.trim())}
+              disabled={isUploading || isPosting}
             >
-              {isUploading ? "Uploading..." : "Post"}
+              {isPosting ? "Posting..." : "Post"}
             </Button>
           </DialogClose>
         </DialogFooter>

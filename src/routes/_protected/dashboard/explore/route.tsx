@@ -1,3 +1,4 @@
+import ExplorePage from '@/app/explore/explore-page'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_protected/dashboard/explore')({
@@ -7,7 +8,7 @@ export const Route = createFileRoute('/_protected/dashboard/explore')({
 function RouteComponent() {
   return (
     <div>
-      <h1>Explore Page</h1>
+      <ExplorePage />
     </div>
   )
 }
