@@ -30,16 +30,6 @@ const CommunityGrid = () => {
       <div className="mb-8 flex items-center justify-between">
         <h2 className="text-2xl font-bold">Browse communities</h2>
         <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-            <Input
-              className="pl-10"
-              placeholder="Search communities..."
-            />
-          </div>
-          <Button className="bg-black text-white hover:bg-neutral-700">
-            Create a community
-          </Button>
         </div>
       </div>
 
