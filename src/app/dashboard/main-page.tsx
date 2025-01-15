@@ -50,7 +50,7 @@ const MainPage = memo(({ children }: { children?: React.ReactNode }) => {
             <Separator orientation="vertical" className="h-4" />
           </div>
 
-          <div className="flex-1 max-w-2xl mx-4 relative">
+          <div className="flex-1 max-w-2xl mx-4 relative" style={{ left: "10px" }}>
             <div className="relative w-full">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-500" />
               <Input
