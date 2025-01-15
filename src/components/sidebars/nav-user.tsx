@@ -81,10 +81,6 @@ export function NavUser({
                 <UserRoundPen />
                 My Profile
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem  onClick={() => logout()}>

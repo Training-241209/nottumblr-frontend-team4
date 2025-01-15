@@ -10,20 +10,14 @@ import { useSearchBloggers } from "@/components/auth/hooks/use-search";
 import { useRouter } from "@tanstack/react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-interface Blogger {
-  bloggerId: number;
-  username: string;
-  firstName: string;
-  lastName: string;
-  profilePictureUrl?: string;
-  fullName?: string;
-}
+const BUCKET_NAME = "profilepicturesfbe74-dev";
+const BUCKET_REGION = "us-east-1";
 
 const MainPage = memo(({ children }: { children?: React.ReactNode }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const router = useRouter();
-  
+
   const { data: searchResults, isLoading } = useSearchBloggers(searchTerm);
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,14 +25,19 @@ const MainPage = memo(({ children }: { children?: React.ReactNode }) => {
     setIsSearchOpen(true);
   }, []);
 
-  const handleSelectBlogger = useCallback((bloggerId: number, username: string) => {
+  const handleSelectBlogger = useCallback((username: string) => {
     setIsSearchOpen(false);
     setSearchTerm("");
     router.navigate({
       to: '/dashboard/other-profile/$username',
-      params: { username }
+      params: { username },
     });
   }, [router]);
+
+  const getProfilePictureUrl = (path: string | undefined) =>
+    path
+      ? `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${path}`
+      : "/default-avatar.png";
 
   return (
     <SidebarProvider>
@@ -68,24 +67,20 @@ const MainPage = memo(({ children }: { children?: React.ReactNode }) => {
               <div className="absolute w-full mt-1 bg-white dark:bg-neutral-900 rounded-md shadow-lg border border-neutral-200 dark:border-neutral-800">
                 <div className="max-h-[300px] overflow-y-auto">
                   {isLoading ? (
-                    <div className="p-4 text-center text-neutral-500">
-                      Searching...
-                    </div>
+                    <div className="p-4 text-center text-neutral-500">Searching...</div>
                   ) : searchResults?.length === 0 ? (
-                    <div className="p-4 text-center text-neutral-500">
-                      No users found
-                    </div>
+                    <div className="p-4 text-center text-neutral-500">No users found</div>
                   ) : (
                     <ul>
-                      {searchResults?.map((blogger: Blogger) => (
+                      {searchResults?.map((blogger) => (
                         <li
                           key={blogger.bloggerId}
-                          onClick={() => handleSelectBlogger(blogger.bloggerId, blogger.username)}
+                          onClick={() => handleSelectBlogger(blogger.username)}
                           className="flex items-center text-neutral-300 gap-3 p-3 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800"
                         >
                           <Avatar className="h-8 w-8">
                             <AvatarImage
-                              src={blogger.profilePictureUrl || "/default-avatar.png"}
+                              src={getProfilePictureUrl(blogger.profilePictureUrl)}
                               alt={blogger.username}
                             />
                             <AvatarFallback>
@@ -95,9 +90,7 @@ const MainPage = memo(({ children }: { children?: React.ReactNode }) => {
                           <div>
                             <p className="font-medium">@{blogger.username}</p>
                             {blogger.fullName && (
-                              <p className="text-sm text-neutral-500">
-                                {blogger.fullName}
-                              </p>
+                              <p className="text-sm text-neutral-500">{blogger.fullName}</p>
                             )}
                           </div>
                         </li>
@@ -113,10 +106,7 @@ const MainPage = memo(({ children }: { children?: React.ReactNode }) => {
         </header>
 
         {isSearchOpen && (
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setIsSearchOpen(false)}
-          />
+          <div className="fixed inset-0 z-40" onClick={() => setIsSearchOpen(false)} />
         )}
 
         <div className="flex flex-1 flex-col gap-9 p-6 dark:text-neutral-100 dark:bg-black">

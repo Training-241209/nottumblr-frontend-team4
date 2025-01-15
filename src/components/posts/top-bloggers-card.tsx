@@ -3,19 +3,29 @@ import { useTopBloggers } from "@/components/posts/hooks/use-top-bloggers";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+const BUCKET_NAME = "profilepicturesfbe74-dev";
+const BUCKET_REGION = "us-east-1";
+
 const TopBloggersCard: React.FC = () => {
   const { data: bloggers = [], isLoading, isError } = useTopBloggers();
 
+  const getProfilePictureUrl = (profilePictureKey: string | null | undefined) =>
+    profilePictureKey
+      ? `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${profilePictureKey}`
+      : "/default-avatar.png";
+
   return (
-    <Card className="bg-gray-800 text-white w-full max-w-md mx-auto p-1.5"> 
-      <CardHeader className="border-b border-gray-700 pb-1"> 
-        <CardTitle className="text-sm text-gray-300"> 
-          Top Bloggers
-        </CardTitle>
+    <Card className="bg-gray-800 text-white w-full max-w-md mx-auto p-1.5">
+      <CardHeader className="border-b border-gray-700 pb-1">
+        <CardTitle className="text-sm text-gray-300">Top Bloggers</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-1.5"> 
-        {isLoading && <p className="text-xs text-gray-400">Loading top bloggers...</p>} 
-        {isError && <p className="text-xs text-red-500">Failed to load top bloggers.</p>} 
+      <CardContent className="space-y-1.5">
+        {isLoading && (
+          <p className="text-xs text-gray-400">Loading top bloggers...</p>
+        )}
+        {isError && (
+          <p className="text-xs text-red-500">Failed to load top bloggers.</p>
+        )}
         {!isLoading && !isError && (
           <ul>
             {bloggers.map((blogger, index) => (
@@ -27,7 +37,7 @@ const TopBloggersCard: React.FC = () => {
               >
                 <Avatar className="w-9 h-9">
                   <AvatarImage
-                    src={blogger.profilePictureUrl || "/default-avatar.png"}
+                    src={getProfilePictureUrl(blogger.profilePictureUrl)}
                     alt={blogger.username}
                   />
                   <AvatarFallback className="bg-gray-700 text-white">
@@ -35,8 +45,12 @@ const TopBloggersCard: React.FC = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-medium text-white text-xs">@{blogger.username}</p> 
-                  <p className="text-xs text-gray-400">{blogger.followerCount} followers</p> 
+                  <p className="font-medium text-white text-xs">
+                    @{blogger.username}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {blogger.followerCount} followers
+                  </p>
                 </div>
               </li>
             ))}
