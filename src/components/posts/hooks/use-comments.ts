@@ -1,54 +1,65 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios-config";
 import { toast } from "sonner";
 
 interface Comment {
   commentId: number;
   content: string;
-  createdAt: string;
   bloggerUsername: string;
+  createdAt: string;
 }
 
-export function useComments(postId: number) {
-  return useQuery<Comment[]>({
-    queryKey: ["comments", postId],
-    queryFn: async () => {
-      const resp = await axiosInstance.get(`/posts/${postId}/comments`);
-      return resp.data;
-    },
-    staleTime: 1000 * 60 * 5,
-  });
-}
-
-export function useCreateComment(postId: number) {
+export function useComments(entityId: number, type: "post" | "reblog") {
   const queryClient = useQueryClient();
-  return useMutation({
+
+  // Fetch comments for a post or reblog
+  const { data: comments } = useQuery({
+    queryKey: ["comments", type, entityId],
+    queryFn: async () => {
+      const endpoint = type === "post" ? `/posts/${entityId}/comments` : `/reblogs/${entityId}/comments`;
+      const response = await axiosInstance.get<Comment[]>(endpoint);
+      return response.data;
+    },
+  });
+
+  // Create comment mutation
+  const createCommentMutation = useMutation({
     mutationFn: async (content: string) => {
-      const resp = await axiosInstance.post(`/posts/${postId}/comments/create`, { content });
-      return resp.data;
+      const endpoint = type === "post" ? `/posts/${entityId}/comments/create` : `/reblogs/${entityId}/comments/create`;
+      return axiosInstance.post<Comment>(endpoint, { content });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+      queryClient.invalidateQueries({ queryKey: ["comments", type, entityId] });
       toast.success("Comment added successfully!");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to add comment.");
+      toast.error(error.response?.data || "Failed to add comment");
     },
   });
-}
 
-export function useDeleteComment(postId: number) {
-  const queryClient = useQueryClient();
-  return useMutation({
+  // Delete comment mutation
+  const deleteCommentMutation = useMutation({
     mutationFn: async (commentId: number) => {
-      await axiosInstance.delete(`/posts/${postId}/comments/delete/${commentId}`);
+      const endpoint =
+        type === "post"
+          ? `/posts/${entityId}/comments/delete/${commentId}`
+          : `/reblogs/${entityId}/comments/delete/${commentId}`;
+      return axiosInstance.delete(endpoint);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["comments", postId] });
-      toast.success("Comment deleted successfully!");
+      queryClient.invalidateQueries({ queryKey: ["comments", type, entityId] });
+      toast.success("Comment deleted successfully");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to delete comment.");
+      toast.error(error.response?.data || "Failed to delete comment");
     },
   });
+
+  return {
+    comments: comments || [],
+    createComment: createCommentMutation.mutate,
+    deleteComment: deleteCommentMutation.mutate,
+    isAddingComment: createCommentMutation.status === "pending", // Updated loading state
+    isDeletingComment: deleteCommentMutation.status === "pending", // Updated loading state
+  };
 }

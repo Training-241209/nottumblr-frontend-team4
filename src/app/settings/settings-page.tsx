@@ -141,6 +141,15 @@ export default function SettingsPage() {
             <div className="w-40 h-40 rounded-full bg-gray-300"></div>
           )}
 
+          {/* Hidden file input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*"
+            onChange={handleProfilePictureChange}
+          />
+
           {/* User Info */}
           <div className="space-y-1.5">
             <h1 className="text-2xl font-bold">

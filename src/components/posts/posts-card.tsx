@@ -16,11 +16,7 @@ import {
 import { useS3Get } from "@/components/auth/hooks/use-s3-get";
 import { useLikes } from "@/components/posts/hooks/use-likes";
 import { useReblogMutation } from "@/components/posts/hooks/use-reblog-mutation";
-import {
-  useComments,
-  useCreateComment,
-  useDeleteComment,
-} from "@/components/posts/hooks/use-comments";
+import { useComments } from "@/components/posts/hooks/use-comments";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../auth/hooks/use-auth";
@@ -61,11 +57,15 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const { getImageUrl } = useS3Get();
   const { likeCount, isLiked, currentUserLikeId, addLike, removeLike } =
-    useLikes(postId);
+    useLikes(postId, "post");
   const reblogMutation = useReblogMutation();
-  const { data: comments = [] } = useComments(postId);
-  const createCommentMutation = useCreateComment(postId);
-  const deleteCommentMutation = useDeleteComment(postId);
+  const {
+    comments,
+    createComment,
+    deleteComment,
+    isAddingComment,
+    isDeletingComment,
+  } = useComments(postId, "post");
 
   const { data: currentUser } = useAuth();
 
@@ -206,9 +206,7 @@ const PostCard: React.FC<PostCardProps> = ({
                 </div>
                 {currentUser?.username === comment.bloggerUsername && (
                   <button
-                    onClick={() =>
-                      deleteCommentMutation.mutate(comment.commentId)
-                    }
+                    onClick={() => deleteComment(comment.commentId)}
                     className="ml-4 text-red-500 hover:text-red-700"
                     aria-label="Delete Comment"
                   >
@@ -222,8 +220,10 @@ const PostCard: React.FC<PostCardProps> = ({
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                createCommentMutation.mutate(commentText);
-                setCommentText("");
+                if (commentText.trim()) {
+                  createComment(commentText);
+                  setCommentText(""); // Clear input field after submission
+                }
               }}
             >
               <div className="flex items-center">
@@ -235,13 +235,7 @@ const PostCard: React.FC<PostCardProps> = ({
                   className="flex-grow p-2 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (commentText.trim()) {
-                      createCommentMutation.mutate(commentText);
-                      setCommentText(""); // Clear input field after submission
-                    }
-                  }}
+                  type="submit"
                   className="ml-2 text-neutral-200 hover:text-white"
                 >
                   <SendHorizontal size={20} />

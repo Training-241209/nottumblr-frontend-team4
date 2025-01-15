@@ -8,11 +8,7 @@ import {
 import { Heart, MessageCircle, SendHorizontal, Trash2 } from "lucide-react";
 import { useS3Get } from "@/components/auth/hooks/use-s3-get";
 import { useLikes } from "@/components/posts/hooks/use-likes";
-import {
-  useComments,
-  useCreateComment,
-  useDeleteComment,
-} from "@/components/posts/hooks/use-comments";
+import { useComments } from "@/components/posts/hooks/use-comments";
 import { useAuth } from "../auth/hooks/use-auth";
 import { useRouter } from "@tanstack/react-router";
 
@@ -43,10 +39,14 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
 }) => {
   const { getImageUrl } = useS3Get();
   const { likeCount, isLiked, currentUserLikeId, addLike, removeLike } =
-    useLikes(reblogId);
-  const { data: comments = [] } = useComments(reblogId);
-  const createCommentMutation = useCreateComment(reblogId);
-  const deleteCommentMutation = useDeleteComment(reblogId);
+    useLikes(reblogId, "reblog");
+ const {
+    comments,
+    createComment,
+    deleteComment,
+    isAddingComment,
+    isDeletingComment,
+  } = useComments(reblogId, "reblog");
 
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
@@ -89,11 +89,10 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
           href={`/profile/${bloggerUsername}`}
           onClick={(e) => {
             e.preventDefault();
-            console.log("hi"); 
+            console.log("hi");
             handleProfileClick(e, bloggerUsername);
           }}
           className="font-medium text-white hover:underline"
-
         >
           @{bloggerUsername}
         </a>{" "}
@@ -188,9 +187,7 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
               </div>
               {currentUser?.username === comment.bloggerUsername && (
                 <button
-                  onClick={() =>
-                    deleteCommentMutation.mutate(comment.commentId)
-                  }
+                  onClick={() => deleteComment(comment.commentId)}
                   className="ml-4 text-red-500 hover:text-red-700"
                   aria-label="Delete Comment"
                 >
@@ -205,8 +202,8 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
             onSubmit={(e) => {
               e.preventDefault();
               if (commentText.trim()) {
-                createCommentMutation.mutate(commentText);
-                setCommentText("");
+                createComment(commentText);
+                setCommentText(""); // Clear input field after submission
               }
             }}
           >
