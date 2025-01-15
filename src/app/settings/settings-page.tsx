@@ -114,6 +114,13 @@ export default function SettingsPage() {
     }
   };
 
+  const BUCKET_NAME = "profilepicturesfbe74-dev";
+  const BUCKET_REGION = "us-east-1";
+
+  const prof_avatar = user?.profilePictureUrl
+  ? `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${user.profilePictureUrl}`
+  : "lbj.png";
+
   return (
     <div className="px-4 space-y-6 md:px-6">
       <header className="space-y-1.5">
@@ -121,7 +128,7 @@ export default function SettingsPage() {
           {/* User Avatar */}
           {avatar ? (
             <img
-              src={avatar}
+              src={prof_avatar}
               alt="User Avatar"
               className="w-40 h-40 rounded-full shadow-md cursor-pointer object-cover"
               onClick={toggleModal}
@@ -133,15 +140,6 @@ export default function SettingsPage() {
           ) : (
             <div className="w-40 h-40 rounded-full bg-gray-300"></div>
           )}
-
-          {/* Hidden file input */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            accept="image/*"
-            onChange={handleProfilePictureChange}
-          />
 
           {/* User Info */}
           <div className="space-y-1.5">

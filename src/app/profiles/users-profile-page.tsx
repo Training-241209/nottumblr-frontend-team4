@@ -21,7 +21,7 @@ const UsersProfile = () => {
 
   return (
     <div className="min-w-[896px] max-w-4xl mx-auto">
-      {/* Profile Section */}
+      {/* Cover Image */}
       <div
         className="relative h-64 bg-sky-400 rounded-lg shadow-lg"
         style={{
