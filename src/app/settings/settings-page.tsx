@@ -4,33 +4,31 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth/hooks/use-auth";
 import { useState, useRef, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useS3Get } from "@/components/auth/hooks/use-s3-get";
+import { useS3Upload } from "@/components/auth/hooks/use-s3-upload";
+import { toast } from "sonner";
 import { axiosInstance } from "@/lib/axios-config";
-
-const BUCKET_NAME = "profilepicturesfbe74-dev";
-const BUCKET_REGION = "us-east-1";
-const BUCKET_URL = `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com`;
 
 export default function SettingsPage() {
   const { data: user } = useAuth();
   const queryClient = useQueryClient();
-  const [avatar, setAvatar] = useState<string | undefined>(undefined);
-  const [isUploading, setIsUploading] = useState(false);
+  const { getImageUrl } = useS3Get();
+  const { uploadToS3, isUploading: isAvatarUploading } = useS3Upload();
+
+  const [avatar, setAvatar] = useState<string | undefined>(
+    getImageUrl(user?.profilePictureUrl, "profile-pictures")
+  );
+  const [firstName, setFirstName] = useState(user?.firstName || "");
+  const [lastName, setLastName] = useState(user?.lastName || "");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch and set avatar on load
-  useEffect(() => {
-    if (user?.profilePictureUrl) {
-      const imageUrl = `${BUCKET_URL}/${user.profilePictureUrl}`;
+  const toggleModal = () => setIsModalOpen((prev) => !prev);
 
-      // Preload avatar before setting it
-      const img = new Image();
-      img.src = imageUrl;
-      img.onload = () => setAvatar(imageUrl);
-    }
-  }, [user?.profilePictureUrl]);
-
-  // Mutation for updating profile picture URL in the database
+  // Mutations
   const updateProfilePictureMutation = useMutation({
     mutationFn: async (profilePictureUrl: string) => {
       const response = await axiosInstance.put("/bloggers/profile-picture", {
@@ -39,57 +37,80 @@ export default function SettingsPage() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth"] }); // Re-fetch user data
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
+      toast.success("Profile picture updated successfully!");
     },
   });
 
-  const toggleModal = () => {
-    setIsModalOpen((prev) => !prev);
-  };
+  const updateFirstNameMutation = useMutation({
+    mutationFn: async (newFirstName: string) => {
+      const response = await axiosInstance.put(`/bloggers/${user?.bloggerId}/first-name`, null, {
+        params: { newFirstName },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
+      toast.success("First name updated successfully!");
+    },
+  });
 
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
+  const updateLastNameMutation = useMutation({
+    mutationFn: async (newLastName: string) => {
+      const response = await axiosInstance.put(`/bloggers/${user?.bloggerId}/last-name`, null, {
+        params: { newLastName },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
+      toast.success("Last name updated successfully!");
+    },
+  });
 
-  const handleProfilePictureChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const updatePasswordMutation = useMutation({
+    mutationFn: async (newPassword: string) => {
+      const response = await axiosInstance.put(`/bloggers/${user?.bloggerId}/password`, null, {
+        params: { newPassword },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Password updated successfully!");
+    },
+  });
+
+  const handleUploadClick = () => fileInputRef.current?.click();
+
+  const handleProfilePictureChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     try {
-      setIsUploading(true);
-
-      // Generate a unique file name
-      const fileExtension = file.name.split(".").pop();
-      const fileName = `profile-pictures/${user?.username || "user"}-${Date.now()}.${fileExtension}`;
-
-      // Construct the upload URL
-      const uploadUrl = `${BUCKET_URL}/${fileName}`;
-
-      // Upload directly to S3 via a PUT request
-      const response = await fetch(uploadUrl, {
-        method: "PUT",
-        body: file,
-        headers: {
-          "Content-Type": file.type,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to upload: ${response.statusText}`);
-      }
-
-      // Update the avatar state with the new URL
-      setAvatar(uploadUrl);
-
-      // Update database with the new profile picture URL
-      await updateProfilePictureMutation.mutateAsync(fileName);
+      const uploadedUrl = await uploadToS3(file, "profile-pictures");
+      setAvatar(uploadedUrl);
+      const fileKey = uploadedUrl.split("/").slice(-2).join("/");
+      await updateProfilePictureMutation.mutateAsync(fileKey);
     } catch (error) {
-      console.error("Error uploading profile picture:", error);
-      alert("Failed to upload profile picture. Please try again.");
-    } finally {
-      setIsUploading(false);
+      toast.error("Failed to upload profile picture. Please try again.");
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      if (firstName && firstName !== user?.firstName) {
+        await updateFirstNameMutation.mutateAsync(firstName);
+      }
+      if (lastName && lastName !== user?.lastName) {
+        await updateLastNameMutation.mutateAsync(lastName);
+      }
+      if (newPassword && newPassword === confirmPassword) {
+        await updatePasswordMutation.mutateAsync(newPassword);
+      } else if (newPassword || confirmPassword) {
+        toast.error("Passwords do not match.");
+      }
+    } catch (error) {
+      toast.error("Failed to update settings. Please try again.");
     }
   };
 
@@ -105,7 +126,7 @@ export default function SettingsPage() {
               className="w-40 h-40 rounded-full shadow-md cursor-pointer object-cover"
               onClick={toggleModal}
             />
-          ) : isUploading ? (
+          ) : isAvatarUploading ? (
             <div className="w-40 h-40 rounded-full bg-gray-300 flex items-center justify-center text-gray-500">
               Uploading...
             </div>
@@ -135,38 +156,16 @@ export default function SettingsPage() {
             variant="secondary"
             size="sm"
             onClick={handleUploadClick}
-            disabled={
-              isUploading || updateProfilePictureMutation.status === "pending"
-            }
+            disabled={isAvatarUploading || updateProfilePictureMutation.status === "pending"}
           >
-            {isUploading
+            {isAvatarUploading
               ? "Uploading..."
               : updateProfilePictureMutation.status === "pending"
-                ? "Saving..."
-                : "Change Profile Picture"}
+              ? "Saving..."
+              : "Change Profile Picture"}
           </Button>
         </div>
       </header>
-
-      {/* Modal */}
-      {isModalOpen && avatar && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75">
-          <div className="relative">
-            <img
-              src={avatar}
-              alt="Full-Size Avatar"
-              className="rounded-lg max-w-full max-h-fit"
-              style={{ width: "300px", height: "auto" }}
-            />
-            <button
-              onClick={toggleModal}
-              className="absolute top-2 right-2 text-white bg-red-500 rounded-full px-2 py-1"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Personal Information Section */}
       <div className="space-y-6">
@@ -175,11 +174,21 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <Label htmlFor="first-name">First Name</Label>
-              <Input id="first-name" placeholder="Enter your first name" />
+              <Input
+                id="first-name"
+                placeholder="Enter your first name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
             </div>
             <div>
               <Label htmlFor="last-name">Last Name</Label>
-              <Input id="last-name" placeholder="Enter your last name" />
+              <Input
+                id="last-name"
+                placeholder="Enter your last name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
             </div>
           </div>
         </div>
@@ -193,7 +202,8 @@ export default function SettingsPage() {
                 id="current-password"
                 placeholder="Enter your current password"
                 type="password"
-                className="w-full"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
               />
             </li>
             <li className="space-y-1">
@@ -202,7 +212,8 @@ export default function SettingsPage() {
                 id="new-password"
                 placeholder="Enter your new password"
                 type="password"
-                className="w-full"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
               />
             </li>
             <li className="space-y-1">
@@ -211,7 +222,8 @@ export default function SettingsPage() {
                 id="confirm-password"
                 placeholder="Confirm your new password"
                 type="password"
-                className="w-full"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </li>
           </ul>
@@ -219,7 +231,9 @@ export default function SettingsPage() {
       </div>
 
       <div className="mt-8 flex justify-between">
-        <Button size="lg">Save</Button>
+        <Button size="lg" onClick={handleSave}>
+          Save
+        </Button>
         <Button size="lg" className="!bg-red-600 !text-white hover:!bg-red-700">
           Delete Account
         </Button>
