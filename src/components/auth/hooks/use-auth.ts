@@ -10,6 +10,7 @@ interface AuthUser { // <-- Defining the shape of AuthUser and what the data wil
   firstName: string;
   lastName: string; 
   profilePictureUrl: string;
+  bloggerId: number;
 }
 
 export function useAuth(): UseQueryResult<AuthUser> { // <-- Defining the custom hook useAuth that we used in _auth.tsx

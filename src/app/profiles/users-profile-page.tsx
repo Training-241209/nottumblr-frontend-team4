@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { useAuth } from "@/components/auth/hooks/use-auth"; // For user authentication
-import PersonalTimeline from  "@/components/timelines/personal-page-timeline"; // Import PersonalTimeline
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import PersonalTimeline from "@/components/timelines/personal-page-timeline"; // Import PersonalTimeline
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import FollowersList from "@/components/followers/followers-list";
 
 const UsersProfile = () => {
   const [activeSection, setActiveSection] = useState("posts");
@@ -85,21 +81,11 @@ const UsersProfile = () => {
       {/* Content Sections */}
       <div className="mr-10">
         <div className="mt-8 flex flex-col space-y-5">
-          {activeSection === "posts" && <PersonalTimeline />} {/* Render PersonalTimeline */}
-          {activeSection === "follows" &&
-            [1, 2].map((user) => (
-              <Card
-                key={user}
-                className="bg-white shadow-md h-15 w-96 max-w-lg mx-auto flex flex-col"
-              >
-                <CardHeader>
-                  <CardTitle>Username {user}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-1">
-                  <p>name</p>
-                </CardContent>
-              </Card>
-            ))}
+          {activeSection === "posts" && <PersonalTimeline />}{" "}
+          {/* Render PersonalTimeline */}
+          {activeSection === "follows" && user?.bloggerId !== undefined && (
+            <FollowersList bloggerId={user.bloggerId} />
+          )} /* Render FollowersList */
         </div>
       </div>
     </div>
