@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';  // Removed useState for title
-import { Paperclip } from 'lucide-react';
+import React, { useRef, useState } from "react";
+import { Paperclip, ImageIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,21 +15,28 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/components/auth/hooks/use-auth";
 import { useS3Upload } from "@/components/auth/hooks/use-s3-upload";
 import { useCreatePost } from "@/components/posts/hooks/use-create-posts";
+import { useGiphy } from "@/components/posts/hooks/use-giphy";
 import { toast } from "sonner";
 
 const CreatePostDialog: React.FC = () => {
   const { data: user } = useAuth();
   const { uploadToS3, isUploading } = useS3Upload();
   const { mutate: createPost, status } = useCreatePost();
-  const [content, setContent] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [content, setContent] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [showGifModal, setShowGifModal] = useState(false);
+  const [gifSearch, setGifSearch] = useState("");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { data: gifs = [], isLoading } = useGiphy(gifSearch);
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -39,6 +46,11 @@ const CreatePostDialog: React.FC = () => {
     } catch {
       // Error handling is already done in the S3 hook
     }
+  };
+
+  const handleGifSelect = (gifUrl: string) => {
+    setImageUrl(gifUrl);
+    setShowGifModal(false);
   };
 
   const handleSubmit = () => {
@@ -54,8 +66,8 @@ const CreatePostDialog: React.FC = () => {
     });
 
     // Reset fields after submission
-    setContent('');
-    setImageUrl('');
+    setContent("");
+    setImageUrl("");
   };
 
   const isPosting = status === "pending";
@@ -63,7 +75,10 @@ const CreatePostDialog: React.FC = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="!bg-white text-black hover:!bg-sky-300">
+        <Button
+          variant="outline"
+          className="!bg-white text-black hover:!bg-sky-300"
+        >
           Create Post
         </Button>
       </DialogTrigger>
@@ -76,7 +91,6 @@ const CreatePostDialog: React.FC = () => {
         </DialogHeader>
 
         <div className="flex flex-col space-y-4">
-          {/* Removed title textarea */}
           <div className="flex items-center justify-between">
             <Button
               variant="ghost"
@@ -87,6 +101,16 @@ const CreatePostDialog: React.FC = () => {
             >
               <Paperclip className="h-5 w-5" />
               {isUploading ? "Uploading..." : "Upload Image"}
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-2 flex items-center gap-2 whitespace-nowrap"
+              onClick={() => setShowGifModal(true)}
+            >
+              <ImageIcon className="h-5 w-5" />
+              Add GIF
             </Button>
           </div>
 
@@ -109,7 +133,7 @@ const CreatePostDialog: React.FC = () => {
                 variant="destructive"
                 size="sm"
                 className="absolute top-2 right-2"
-                onClick={() => setImageUrl('')}
+                onClick={() => setImageUrl("")}
               >
                 Remove
               </Button>
@@ -118,7 +142,9 @@ const CreatePostDialog: React.FC = () => {
 
           <Textarea
             className={`resize-none w-full ${
-              imageUrl ? "min-h-[250px] max-h-[250px]" : "min-h-[550px] max-h-[550px]"
+              imageUrl
+                ? "min-h-[250px] max-h-[250px]"
+                : "min-h-[550px] max-h-[550px]"
             }`}
             placeholder="What's on your mind?"
             value={content}
@@ -143,6 +169,42 @@ const CreatePostDialog: React.FC = () => {
           </DialogClose>
         </DialogFooter>
       </DialogContent>
+
+      {/* Giphy Modal */}
+      {showGifModal && (
+        <Dialog open={showGifModal} onOpenChange={setShowGifModal}>
+          <DialogContent className="max-w-lg bg-white text-black rounded-lg shadow-lg p-4">
+            <DialogHeader>
+              <DialogTitle className="text-gray-400">Search for your favorite GIF</DialogTitle>
+            </DialogHeader>
+              <input
+                type="text"
+                placeholder="Search for a GIF..."
+                value={gifSearch}
+                onChange={(e) => setGifSearch(e.target.value)}
+                className={`resize-none w-full min-h-[50px] max-h-[50px] p-2 bg-neutral-900 text-white rounded-md focus:outline-none focus:ring focus:ring-blue-500`}
+              />
+            <div
+              className="grid grid-cols-3 gap-4 overflow-y-auto"
+              style={{ maxHeight: "400px" }}
+            >
+              {isLoading ? (
+                <p className="text-center col-span-3">Loading GIFs...</p>
+              ) : (
+                gifs.map((gif) => (
+                  <img
+                    key={gif.id}
+                    src={gif.mediaUrl}
+                    alt={gif.title}
+                    className="cursor-pointer rounded-lg hover:scale-105 transition-transform"
+                    onClick={() => handleGifSelect(gif.mediaUrl)}
+                  />
+                ))
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </Dialog>
   );
 };
