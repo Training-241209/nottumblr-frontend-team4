@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { Heart, MessageCircle, SendHorizontal, Trash2 } from "lucide-react";
 import { useS3Get } from "@/components/auth/hooks/use-s3-get";
 import { useLikes } from "@/components/posts/hooks/use-likes";
@@ -9,6 +14,7 @@ import {
   useDeleteComment,
 } from "@/components/posts/hooks/use-comments";
 import { useAuth } from "../auth/hooks/use-auth";
+import { useRouter } from "@tanstack/react-router";
 
 interface ReblogCardProps {
   reblogId: number;
@@ -47,6 +53,8 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
 
   const { data: currentUser } = useAuth();
 
+  const router = useRouter();
+
   const handleLikeClick = () => {
     if (isLiked && currentUserLikeId) {
       removeLike(currentUserLikeId);
@@ -57,10 +65,19 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
 
   const toggleComments = () => setShowComments((prev) => !prev);
 
-  const handleProfileClick = (username: string, e: React.MouseEvent) => {
+  const handleProfileClick = (e: React.MouseEvent, username: string) => {
     e.preventDefault();
-    if (onProfileClick) {
-      onProfileClick(username);
+    if (username === currentUser?.username) {
+      // Redirect to the current user's profile
+      router.navigate({
+        to: "/dashboard/profile",
+      });
+    } else {
+      // Redirect to another user's profile
+      router.navigate({
+        to: "/dashboard/other-profile/$username",
+        params: { username },
+      });
     }
   };
 
@@ -70,14 +87,19 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
       <div className="bg-gray-700 text-gray-300 text-sm p-2 pl-4">
         <a
           href={`/profile/${bloggerUsername}`}
-          onClick={(e) => handleProfileClick(bloggerUsername, e)}
+          onClick={(e) => {
+            e.preventDefault();
+            console.log("hi"); 
+            handleProfileClick(e, bloggerUsername);
+          }}
           className="font-medium text-white hover:underline"
+
         >
           @{bloggerUsername}
         </a>{" "}
         reblogged
       </div>
-  
+
       <CardContent className="p-4">
         {/* Reblog Comment */}
         {comment && (
@@ -85,23 +107,29 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
             {comment}
           </p>
         )}
-  
+
         {/* Original Post Preview */}
         <div className="flex items-center mb-2">
-          <img
-            src={getImageUrl(
-              originalPostProfilePictureUrl,
-              "",
-              "/default-avatar.png"
-            )}
-            alt={`${originalPostUsername}'s avatar`}
-            className="w-12 h-12 rounded-full object-cover"
-          />
-          <div className="ml-4">
-            <p className="text-gray-400">@{originalPostUsername}</p>
-          </div>
+          <a
+            href={`/profile/${originalPostUsername}`}
+            onClick={(e) => handleProfileClick(e, originalPostUsername)}
+            className="flex items-center hover:bg-gray-700 rounded-lg p-2 transition duration-200"
+          >
+            <img
+              src={getImageUrl(
+                originalPostProfilePictureUrl,
+                "",
+                "/default-avatar.png"
+              )}
+              alt={`${originalPostUsername}'s avatar`}
+              className="w-12 h-12 rounded-full object-cover"
+            />
+            <div className="ml-4">
+              <p className="text-gray-400">@{originalPostUsername}</p>
+            </div>
+          </a>
         </div>
-  
+
         <p className="text-white">{originalPostContent}</p>
         {originalPostMediaUrl && (
           <img
@@ -110,12 +138,12 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
             className="rounded-lg w-full h-auto mt-2"
           />
         )}
-  
+
         <p className="text-sm text-gray-400 mt-2">
           Reblogged at {new Date(rebloggedAt).toLocaleString()}
         </p>
       </CardContent>
-  
+
       <CardFooter className="flex justify-end items-center space-x-4 border-t border-gray-700 pt-4 px-4">
         <button
           onClick={handleLikeClick}
@@ -128,7 +156,7 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
             {likeCount} {likeCount === 1 ? "Like" : "Likes"}
           </span>
         </button>
-  
+
         <button
           onClick={toggleComments}
           className="flex items-center space-x-2 text-gray-300 hover:text-white"
@@ -137,12 +165,12 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
           <span>Comments</span>
         </button>
       </CardFooter>
-  
+
       {/* Comments Section */}
       {showComments && (
         <div className="p-4 mt-4 border-t border-gray-700">
           <h4 className="text-gray-400 mb-4">Comments</h4>
-  
+
           {/* Comments list */}
           {comments.map((comment) => (
             <div
@@ -160,7 +188,9 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
               </div>
               {currentUser?.username === comment.bloggerUsername && (
                 <button
-                  onClick={() => deleteCommentMutation.mutate(comment.commentId)}
+                  onClick={() =>
+                    deleteCommentMutation.mutate(comment.commentId)
+                  }
                   className="ml-4 text-red-500 hover:text-red-700"
                   aria-label="Delete Comment"
                 >
@@ -169,7 +199,7 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
               )}
             </div>
           ))}
-  
+
           {/* Add comment form */}
           <form
             onSubmit={(e) => {

@@ -24,6 +24,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../auth/hooks/use-auth";
+import { useRouter } from "@tanstack/react-router";
 
 interface PostCardProps {
   postId: number;
@@ -68,6 +69,8 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const { data: currentUser } = useAuth();
 
+  const router = useRouter();
+
   const handleLikeClick = () => {
     if (isLiked && currentUserLikeId) {
       removeLike(currentUserLikeId);
@@ -80,8 +83,17 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const handleProfileClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (onProfileClick) {
-      onProfileClick(username);
+    if (username === currentUser?.username) {
+      // Redirect to the current user's profile
+      router.navigate({
+        to: "/dashboard/profile",
+      });
+    } else {
+      // Redirect to another user's profile
+      router.navigate({
+        to: "/dashboard/other-profile/$username",
+        params: { username },
+      });
     }
   };
 
