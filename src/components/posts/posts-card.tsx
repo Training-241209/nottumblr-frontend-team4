@@ -5,12 +5,25 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Heart, MessageCircle, Repeat, X } from "lucide-react";
+import {
+  Heart,
+  MessageCircle,
+  Repeat,
+  SendHorizontal,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useS3Get } from "@/components/auth/hooks/use-s3-get";
 import { useLikes } from "@/components/posts/hooks/use-likes";
 import { useReblogMutation } from "@/components/posts/hooks/use-reblog-mutation";
+import {
+  useComments,
+  useCreateComment,
+  useDeleteComment,
+} from "@/components/posts/hooks/use-comments";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "../auth/hooks/use-auth";
 
 interface PostCardProps {
   postId: number;
@@ -43,11 +56,17 @@ const PostCard: React.FC<PostCardProps> = ({
   const [showComments, setShowComments] = useState(false);
   const [showReblogModal, setShowReblogModal] = useState(false);
   const [reblogComment, setReblogComment] = useState("");
+  const [commentText, setCommentText] = useState("");
 
   const { getImageUrl } = useS3Get();
   const { likeCount, isLiked, currentUserLikeId, addLike, removeLike } =
     useLikes(postId);
   const reblogMutation = useReblogMutation();
+  const { data: comments = [] } = useComments(postId);
+  const createCommentMutation = useCreateComment(postId);
+  const deleteCommentMutation = useDeleteComment(postId);
+
+  const { data: currentUser } = useAuth();
 
   const handleLikeClick = () => {
     if (isLiked && currentUserLikeId) {
@@ -156,15 +175,67 @@ const PostCard: React.FC<PostCardProps> = ({
 
         {showComments && (
           <div className="p-4 mt-4 border-t border-gray-700">
-            <h4 className="text-gray-400 mb-2">Comments</h4>
-            <p className="text-gray-500">No comments yet. Be the first to comment!</p>
-            <div className="mt-4">
-              <input
-                type="text"
-                placeholder="Write a comment..."
-                className="w-full p-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+            <h4 className="text-gray-400 mb-4">Comments</h4>
+
+            {/* Fetch and display comments */}
+            {comments.map((comment) => (
+              <div
+                key={comment.commentId}
+                className="flex items-start mb-4 border-b border-gray-700 pb-2"
+              >
+                <div className="flex-grow">
+                  <p className="text-sm text-white font-medium">
+                    @{comment.bloggerUsername}
+                  </p>
+                  <p className="text-sm text-gray-300">{comment.content}</p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(comment.createdAt).toLocaleString()}
+                  </p>
+                </div>
+                {currentUser?.username === comment.bloggerUsername && (
+                  <button
+                    onClick={() =>
+                      deleteCommentMutation.mutate(comment.commentId)
+                    }
+                    className="ml-4 text-red-500 hover:text-red-700"
+                    aria-label="Delete Comment"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                )}
+              </div>
+            ))}
+
+            {/* Add comment form */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                createCommentMutation.mutate(commentText);
+                setCommentText("");
+              }}
+            >
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  placeholder="Write a comment..."
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  className="flex-grow p-2 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (commentText.trim()) {
+                      createCommentMutation.mutate(commentText);
+                      setCommentText(""); // Clear input field after submission
+                    }
+                  }}
+                  className="ml-2 text-neutral-200 hover:text-white"
+                >
+                  <SendHorizontal size={20} />
+                </button>
+              </div>
+            </form>
           </div>
         )}
       </Card>

@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Heart, MessageCircle } from "lucide-react";
+import { Heart, MessageCircle, SendHorizontal, Trash2 } from "lucide-react";
 import { useS3Get } from "@/components/auth/hooks/use-s3-get";
 import { useLikes } from "@/components/posts/hooks/use-likes";
+import {
+  useComments,
+  useCreateComment,
+  useDeleteComment,
+} from "@/components/posts/hooks/use-comments";
+import { useAuth } from "../auth/hooks/use-auth";
 
 interface ReblogCardProps {
   reblogId: number;
@@ -32,6 +38,14 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
   const { getImageUrl } = useS3Get();
   const { likeCount, isLiked, currentUserLikeId, addLike, removeLike } =
     useLikes(reblogId);
+  const { data: comments = [] } = useComments(reblogId);
+  const createCommentMutation = useCreateComment(reblogId);
+  const deleteCommentMutation = useDeleteComment(reblogId);
+
+  const [showComments, setShowComments] = useState(false);
+  const [commentText, setCommentText] = useState("");
+
+  const { data: currentUser } = useAuth();
 
   const handleLikeClick = () => {
     if (isLiked && currentUserLikeId) {
@@ -40,6 +54,8 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
       addLike();
     }
   };
+
+  const toggleComments = () => setShowComments((prev) => !prev);
 
   const handleProfileClick = (username: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -108,24 +124,93 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
         </p>
       </CardContent>
 
-      <CardFooter className="flex justify-end items-center space-x-4 border-t border-gray-700 pt-4 px-4">
-        {/* Like Button */}
-        <button
-          onClick={handleLikeClick}
-          className={`flex items-center space-x-2 ${
-            isLiked ? "text-pink-500" : "text-gray-300 hover:text-white"
-          }`}
-        >
-          <Heart size={20} className={isLiked ? "fill-current" : ""} />
-          <span>
-            {likeCount} {likeCount === 1 ? "Like" : "Likes"}
-          </span>
-        </button>
-        <button className="flex items-center space-x-2 text-gray-300 hover:text-white">
-          <MessageCircle size={20} />
-          <span>Comments</span>
-        </button>
+      <CardFooter className="flex justify-end items-center border-t border-gray-700 pt-4 px-4">
+        <div className="flex space-x-4">
+          {/* Like Button */}
+          <button
+            onClick={handleLikeClick}
+            className={`flex items-center space-x-2 ${
+              isLiked ? "text-pink-500" : "text-gray-300 hover:text-white"
+            }`}
+          >
+            <Heart size={20} className={isLiked ? "fill-current" : ""} />
+            <span>
+              {likeCount} {likeCount === 1 ? "Like" : "Likes"}
+            </span>
+          </button>
+
+          {/* Comment Button */}
+          <button
+            onClick={toggleComments}
+            className="flex items-center space-x-2 text-gray-300 hover:text-white"
+          >
+            <MessageCircle size={20} />
+            <span>Comments</span>
+          </button>
+        </div>
       </CardFooter>
+
+      {/* Comments Section */}
+      {showComments && (
+        <div className="p-4 mt-4 border-t border-gray-700">
+          <h4 className="text-gray-400 mb-4">Comments</h4>
+
+          {/* Fetch and display comments */}
+          {comments.map((comment) => (
+            <div
+              key={comment.commentId}
+              className="flex items-start mb-4 border-b border-gray-700 pb-2"
+            >
+              <div className="ml-3">
+                <p className="text-sm text-white font-medium">
+                  @{comment.bloggerUsername}
+                </p>
+                <p className="text-sm text-gray-300">{comment.content}</p>
+                <p className="text-xs text-gray-500">
+                  {new Date(comment.createdAt).toLocaleString()}
+                </p>
+              </div>
+              {currentUser?.username === comment.bloggerUsername && (
+                <button
+                  onClick={() =>
+                    deleteCommentMutation.mutate(comment.commentId)
+                  }
+                  className="text-red-500 text-sm ml-auto"
+                >
+                  <Trash2 size={20} />
+                </button>
+              )}
+            </div>
+          ))}
+
+          {/* Add comment form */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (commentText.trim()) {
+                createCommentMutation.mutate(commentText);
+                setCommentText(""); // Clear input field
+              }
+            }}
+          >
+            <div className="flex items-center">
+              <input
+                type="text"
+                placeholder="Write a comment..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                className="flex-grow p-2 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="submit"
+                className="ml-2 text-neutral-200 hover:text-white"
+              >
+                <SendHorizontal size={20} />
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </Card>
   );
 };
