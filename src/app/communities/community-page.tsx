@@ -1,45 +1,40 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search } from 'lucide-react';
-import { useRouter } from '@tanstack/react-router';
+import { useRouter } from "@tanstack/react-router";
 
 const CommunityGrid = () => {
   const router = useRouter();
-  
+
   // Sample data for community cards
   const communities = [
-    { id: 1, title: 'Aesthetic', image: '/aesthetic.png', bg: 'bg-pink-200' },
-    { id: 2, title: 'Anime', image: '/anime-fma.png', bg: 'bg-blue-200' },
-    { id: 3, title: 'Community Spotlight', image: '/community.png', bg: 'bg-yellow-200' },
-    { id: 4, title: 'Books & Literature', image: '/books.png', bg: 'bg-green-200' },
-    { id: 5, title: 'Gaming', image: '/gaming.png', bg: 'bg-purple-200' },
-    { id: 6, title: 'Art', image: '/art.png', bg: 'bg-indigo-200' },
-    { id: 7, title: 'Movies', image: '/movies.png', bg: 'bg-red-200' },
-    { id: 8, title: 'TV Shows', image: '/tv-shows.png', bg: 'bg-red-200' },
-    { id: 9, title: 'Culture', image: '/culture.png', bg: 'bg-red-200' },
+    { id: 1, title: "Aesthetic", image: "/aesthetic.png", bg: "bg-pink-200" },
+    { id: 2, title: "Anime", image: "/anime-fma.png", bg: "bg-blue-200" },
+    { id: 3, title: "Community Spotlight", image: "/community.png", bg: "bg-yellow-200" },
+    { id: 4, title: "Books & Literature", image: "/books.png", bg: "bg-green-200" },
+    { id: 5, title: "Gaming", image: "/gaming.png", bg: "bg-purple-200" },
+    { id: 6, title: "Art", image: "/art.png", bg: "bg-indigo-200" },
+    { id: 7, title: "Movies", image: "/movies.png", bg: "bg-red-200" },
+    { id: 8, title: "TV Shows", image: "/tv-shows.png", bg: "bg-red-200" },
+    { id: 9, title: "Culture", image: "/culture.png", bg: "bg-red-200" },
   ];
 
-  const handleCardClick = (communityId: number) => {
-    router.navigate({ to: `/community/${communityId}` }); 
+  const handleCardClick = (communityTitle: string) => {
+    router.navigate({ to: `/dashboard/communities/community/${communityTitle}` });
   };
 
   return (
     <div className="p-6">
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Browse communities</h2>
-        <div className="flex items-center space-x-4">
-        </div>
+        <h2 className="text-2xl font-bold">Browse Communities</h2>
       </div>
 
       {/* Grid of Community Cards */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {communities.map((community) => (
-          <Card 
+          <Card
             key={community.id}
             className="cursor-pointer overflow-hidden transition-all hover:scale-105"
-            onClick={() => handleCardClick(community.id)}
+            onClick={() => handleCardClick(community.title)} // Pass the correct community title
           >
             <CardContent className="p-0">
               <div className="relative">

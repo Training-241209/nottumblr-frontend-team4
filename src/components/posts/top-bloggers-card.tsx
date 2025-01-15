@@ -2,17 +2,26 @@ import React from "react";
 import { useTopBloggers } from "@/components/posts/hooks/use-top-bloggers";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRouter } from "@tanstack/react-router";
 
 const BUCKET_NAME = "profilepicturesfbe74-dev";
 const BUCKET_REGION = "us-east-1";
 
 const TopBloggersCard: React.FC = () => {
   const { data: bloggers = [], isLoading, isError } = useTopBloggers();
+  const router = useRouter();
 
   const getProfilePictureUrl = (profilePictureKey: string | null | undefined) =>
     profilePictureKey
       ? `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${profilePictureKey}`
       : "/default-avatar.png";
+
+  const handleProfileClick = (username: string) => {
+    router.navigate({
+      to: username === "currentUser" ? "/dashboard/profile" : "/dashboard/other-profile/$username",
+      params: { username },
+    });
+  };
 
   return (
     <Card className="bg-gray-800 text-white w-full max-w-md mx-auto p-1.5">
@@ -45,9 +54,12 @@ const TopBloggersCard: React.FC = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-medium text-white text-xs">
+                  <button
+                    className="font-medium text-neutral-300 hover:underline text-xs"
+                    onClick={() => handleProfileClick(blogger.username)}
+                  >
                     @{blogger.username}
-                  </p>
+                  </button>
                   <p className="text-xs text-gray-400">
                     {blogger.followerCount} followers
                   </p>

@@ -8,26 +8,35 @@ import { axiosInstance } from "@/lib/axios-config";
 import { toast } from "sonner";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "@tanstack/react-router";
 
 export default function ExplorePage() {
   const { data: bloggers = [], isLoading, isError } = useTopBloggers();
   const { data: authUser } = useAuth();
+  const router = useRouter();
   const [followedUsers, setFollowedUsers] = useState<Record<number, boolean>>({});
 
+  const BUCKET_NAME = "profilepicturesfbe74-dev";
+  const BUCKET_REGION = "us-east-1";
+  const BUCKET_URL = `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com`;
+
+  const constructProfilePictureUrl = (key: string | null | undefined): string => {
+    return key ? `${BUCKET_URL}/${key}` : "/default-avatar.png";
+  };
+
   const fetchFollowStatus = async (bloggerId: number) => {
-    const response = await axiosInstance.get('/followers/isFollowing', {
+    const response = await axiosInstance.get("/followers/isFollowing", {
       params: {
         followerId: authUser?.bloggerId,
         followeeId: bloggerId,
       },
     });
-    return response.data; // Should return a boolean
+    return response.data;
   };
 
   const { data: displayedBloggers } = useQuery({
     queryKey: ["displayedBloggers"],
     queryFn: async () => {
-      // Filter out the current user and shuffle
       const otherBloggers = bloggers.filter(
         (blogger) => blogger.bloggerId !== authUser?.bloggerId
       );
@@ -86,6 +95,14 @@ export default function ExplorePage() {
     }
   };
 
+  const handleProfileClick = (username: string) => {
+    if (authUser?.username === username) {
+      router.navigate({ to: "/dashboard/profile" });
+    } else {
+      router.navigate({ to: "/dashboard/other-profile/$username", params: { username } });
+    }
+  };
+
   const MAX_BLOGGERS = 12;
 
   return (
@@ -94,11 +111,20 @@ export default function ExplorePage() {
         <h1 className="text-3xl font-bold">Explore</h1>
       </div>
 
-          {/* Trending Hashtags */}
-          <section>
-        <h2 className="text-xl font-semibold mb-4">Trending Hashtags</h2>
+      <section>
+        <h2 className="text-xl font-semibold mb-4">Trending Communities</h2>
         <div className="flex flex-wrap gap-2">
-          {["#Aesthetic", "#Anime", "#Community Spotlight", "#Books & Literature", "#Gaming", "#Art", "#Movies", "#TV Shows", "#Culture"].map((tag, index) => (
+          {[
+            "#Aesthetic",
+            "#Anime",
+            "#Community Spotlight",
+            "#Books & Literature",
+            "#Gaming",
+            "#Art",
+            "#Movies",
+            "#TV Shows",
+            "#Culture",
+          ].map((tag, index) => (
             <Badge key={index} variant="outline" className="cursor-pointer hover:bg-gray-100">
               {tag}
             </Badge>
@@ -117,13 +143,18 @@ export default function ExplorePage() {
                 <CardHeader className="flex items-center space-x-4">
                   <Avatar>
                     <AvatarImage
-                      src={blogger.profilePictureUrl || "/default-avatar.png"}
+                      src={constructProfilePictureUrl(blogger.profilePictureUrl)}
                       alt={blogger.username}
                     />
                     <AvatarFallback>{blogger.username.charAt(0).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-medium">{blogger.username}</p>
+                    <button
+                      className="font-medium text-neutral-300 hover:underline"
+                      onClick={() => handleProfileClick(blogger.username)}
+                    >
+                      @{blogger.username}
+                    </button>
                     <p className="text-sm text-gray-500">{blogger.followerCount} followers</p>
                   </div>
                 </CardHeader>
