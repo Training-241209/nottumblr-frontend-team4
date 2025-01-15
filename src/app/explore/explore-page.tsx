@@ -86,6 +86,8 @@ export default function ExplorePage() {
     }
   };
 
+  const MAX_BLOGGERS = 12;
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-center h-full">
@@ -110,7 +112,7 @@ export default function ExplorePage() {
         {isError && <p>Failed to load suggested people.</p>}
         {displayedBloggers && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {displayedBloggers.map((blogger) => (
+            {displayedBloggers.slice(0, MAX_BLOGGERS).map((blogger) => (
               <Card key={blogger.bloggerId} className="hover:shadow-lg">
                 <CardHeader className="flex items-center space-x-4">
                   <Avatar>
