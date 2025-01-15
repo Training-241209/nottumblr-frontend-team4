@@ -21,6 +21,7 @@ import { Route as ProtectedDashboardSettingsRouteImport } from './routes/_protec
 import { Route as ProtectedDashboardProfileRouteImport } from './routes/_protected/dashboard/profile/route'
 import { Route as ProtectedDashboardExploreRouteImport } from './routes/_protected/dashboard/explore/route'
 import { Route as ProtectedDashboardCommunitiesRouteImport } from './routes/_protected/dashboard/communities/route'
+import { Route as ProtectedDashboardOtherProfileUsernameImport } from './routes/_protected/dashboard/other-profile/$username'
 
 // Create/Update Routes
 
@@ -84,6 +85,13 @@ const ProtectedDashboardCommunitiesRouteRoute =
   ProtectedDashboardCommunitiesRouteImport.update({
     id: '/communities',
     path: '/communities',
+    getParentRoute: () => ProtectedDashboardRouteRoute,
+  } as any)
+
+const ProtectedDashboardOtherProfileUsernameRoute =
+  ProtectedDashboardOtherProfileUsernameImport.update({
+    id: '/other-profile/$username',
+    path: '/other-profile/$username',
     getParentRoute: () => ProtectedDashboardRouteRoute,
   } as any)
 
@@ -161,6 +169,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAuthRegisterImport
       parentRoute: typeof AuthImport
     }
+    '/_protected/dashboard/other-profile/$username': {
+      id: '/_protected/dashboard/other-profile/$username'
+      path: '/other-profile/$username'
+      fullPath: '/dashboard/other-profile/$username'
+      preLoaderRoute: typeof ProtectedDashboardOtherProfileUsernameImport
+      parentRoute: typeof ProtectedDashboardRouteImport
+    }
   }
 }
 
@@ -184,6 +199,7 @@ interface ProtectedDashboardRouteRouteChildren {
   ProtectedDashboardProfileRouteRoute: typeof ProtectedDashboardProfileRouteRoute
   ProtectedDashboardSettingsRouteRoute: typeof ProtectedDashboardSettingsRouteRoute
   ProtectedDashboardTimelineRouteRoute: typeof ProtectedDashboardTimelineRouteRoute
+  ProtectedDashboardOtherProfileUsernameRoute: typeof ProtectedDashboardOtherProfileUsernameRoute
 }
 
 const ProtectedDashboardRouteRouteChildren: ProtectedDashboardRouteRouteChildren =
@@ -194,6 +210,8 @@ const ProtectedDashboardRouteRouteChildren: ProtectedDashboardRouteRouteChildren
     ProtectedDashboardProfileRouteRoute: ProtectedDashboardProfileRouteRoute,
     ProtectedDashboardSettingsRouteRoute: ProtectedDashboardSettingsRouteRoute,
     ProtectedDashboardTimelineRouteRoute: ProtectedDashboardTimelineRouteRoute,
+    ProtectedDashboardOtherProfileUsernameRoute:
+      ProtectedDashboardOtherProfileUsernameRoute,
   }
 
 const ProtectedDashboardRouteRouteWithChildren =
@@ -223,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/timeline': typeof ProtectedDashboardTimelineRouteRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
+  '/dashboard/other-profile/$username': typeof ProtectedDashboardOtherProfileUsernameRoute
 }
 
 export interface FileRoutesByTo {
@@ -235,6 +254,7 @@ export interface FileRoutesByTo {
   '/dashboard/timeline': typeof ProtectedDashboardTimelineRouteRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
+  '/dashboard/other-profile/$username': typeof ProtectedDashboardOtherProfileUsernameRoute
 }
 
 export interface FileRoutesById {
@@ -249,6 +269,7 @@ export interface FileRoutesById {
   '/_protected/dashboard/timeline': typeof ProtectedDashboardTimelineRouteRoute
   '/_auth/auth/login': typeof AuthAuthLoginRoute
   '/_auth/auth/register': typeof AuthAuthRegisterRoute
+  '/_protected/dashboard/other-profile/$username': typeof ProtectedDashboardOtherProfileUsernameRoute
 }
 
 export interface FileRouteTypes {
@@ -263,6 +284,7 @@ export interface FileRouteTypes {
     | '/dashboard/timeline'
     | '/auth/login'
     | '/auth/register'
+    | '/dashboard/other-profile/$username'
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
@@ -274,6 +296,7 @@ export interface FileRouteTypes {
     | '/dashboard/timeline'
     | '/auth/login'
     | '/auth/register'
+    | '/dashboard/other-profile/$username'
   id:
     | '__root__'
     | '/_auth'
@@ -286,6 +309,7 @@ export interface FileRouteTypes {
     | '/_protected/dashboard/timeline'
     | '/_auth/auth/login'
     | '/_auth/auth/register'
+    | '/_protected/dashboard/other-profile/$username'
   fileRoutesById: FileRoutesById
 }
 
@@ -334,7 +358,8 @@ export const routeTree = rootRoute
         "/_protected/dashboard/explore",
         "/_protected/dashboard/profile",
         "/_protected/dashboard/settings",
-        "/_protected/dashboard/timeline"
+        "/_protected/dashboard/timeline",
+        "/_protected/dashboard/other-profile/$username"
       ]
     },
     "/_protected/dashboard/communities": {
@@ -364,6 +389,10 @@ export const routeTree = rootRoute
     "/_auth/auth/register": {
       "filePath": "_auth/auth/register.tsx",
       "parent": "/_auth"
+    },
+    "/_protected/dashboard/other-profile/$username": {
+      "filePath": "_protected/dashboard/other-profile/$username.tsx",
+      "parent": "/_protected/dashboard"
     }
   }
 }

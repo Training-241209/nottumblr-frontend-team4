@@ -3,11 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const TrendingPostCard: React.FC = () => {
   return (
-    <Card className="w-full max-w-md mx-auto p-1.5"> 
-      <CardHeader className="border-b border-neutral-700 pb-1">
-        <CardTitle className="text-sm">Trending Post</CardTitle> 
+    <Card className="bg-gray-800 text-white w-full max-w-md mx-auto p-1.5"> 
+      <CardHeader className="border-b border-gray-700 pb-1">
+        <CardTitle className="text-sm text-gray-300">Trending Post</CardTitle> 
       </CardHeader>
-      <CardContent className="space-y-1.5 flex flex-col items-center pt-4"> {/* Added padding to the top */}
+      <CardContent className="space-y-1.5 flex flex-col items-center pt-4"> 
         <a
           href="https://giphy.com/gifs/thedudeperfectshow-cmt-the-dude-perfect-show-l3V0lsGtTMSB5YNgc"
           target="_blank"

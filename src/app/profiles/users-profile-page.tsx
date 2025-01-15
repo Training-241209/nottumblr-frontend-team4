@@ -71,7 +71,7 @@ const UsersProfile = () => {
               : "text-neutral-500 dark:text-neutral-400"
           }`}
         >
-          Following
+          Followers
           {activeSection === "follows" && (
             <div className="absolute bottom-0 left-0 w-full h-[2px] bg-black dark:bg-neutral-100"></div>
           )}
@@ -85,7 +85,7 @@ const UsersProfile = () => {
           {/* Render PersonalTimeline */}
           {activeSection === "follows" && user?.bloggerId !== undefined && (
             <FollowersList bloggerId={user.bloggerId} />
-          )} /* Render FollowersList */
+          )}
         </div>
       </div>
     </div>

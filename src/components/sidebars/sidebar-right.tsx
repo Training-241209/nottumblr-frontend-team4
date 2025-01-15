@@ -51,7 +51,7 @@ export function SidebarRight({
       {...props}
     >
       <SidebarHeader className="border-b border-sidebar-border h-12 dark:border-neutral-800 dark:bg-black dark:text-neutral-100">
-        <NavMain items={data.navMain} />
+
       </SidebarHeader>
       <SidebarContent className="p-4">
         <div className="w-full max-w-sm mx-auto pt-4 h-[300px] space-y-8">

@@ -77,7 +77,7 @@ const CreatePostDialog: React.FC = () => {
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="!bg-white text-black hover:!bg-sky-300"
+          className="w-full bg-blue-500 text-white hover:bg-blue-600 dark:bg-white dark:text-black dark:hover:bg-blue-700"
         >
           Create Post
         </Button>
@@ -153,11 +153,6 @@ const CreatePostDialog: React.FC = () => {
         </div>
 
         <DialogFooter className="sm:justify-end">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Cancel
-            </Button>
-          </DialogClose>
           <DialogClose asChild>
             <Button
               type="submit"

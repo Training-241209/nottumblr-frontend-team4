@@ -65,9 +65,9 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
   };
 
   return (
-    <Card className="bg-transparent text-white relative overflow-hidden rounded-lg shadow-md">
+    <Card className="bg-gray-800 text-white relative overflow-hidden rounded-lg">
       {/* Reblogged Header */}
-      <div className="text-gray-400 text-sm p-2">
+      <div className="bg-gray-700 text-gray-300 text-sm p-2 pl-4">
         <a
           href={`/profile/${bloggerUsername}`}
           onClick={(e) => handleProfileClick(bloggerUsername, e)}
@@ -77,91 +77,79 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
         </a>{" "}
         reblogged
       </div>
-
+  
       <CardContent className="p-4">
         {/* Reblog Comment */}
         {comment && (
-          <p className="text-base text-gray-300 mb-4 border-b border-gray-700 pb-4">
+          <p className="italic text-gray-300 mb-4 border-l-2 border-gray-700 pl-4">
             {comment}
           </p>
         )}
-
+  
         {/* Original Post Preview */}
-        <div>
-          <div className="flex items-center mb-2">
-            <img
-              src={getImageUrl(
-                originalPostProfilePictureUrl,
-                "",
-                "/default-avatar.png"
-              )}
-              alt={`${originalPostUsername}'s avatar`}
-              className="w-8 h-8 rounded-full object-cover"
-            />
-            <div className="ml-3">
-              <a
-                href={`/profile/${originalPostUsername}`}
-                onClick={(e) => handleProfileClick(originalPostUsername, e)}
-                className="text-sm font-medium text-white hover:underline"
-              >
-                @{originalPostUsername}
-              </a>
-            </div>
+        <div className="flex items-center mb-2">
+          <img
+            src={getImageUrl(
+              originalPostProfilePictureUrl,
+              "",
+              "/default-avatar.png"
+            )}
+            alt={`${originalPostUsername}'s avatar`}
+            className="w-12 h-12 rounded-full object-cover"
+          />
+          <div className="ml-4">
+            <p className="text-gray-400">@{originalPostUsername}</p>
           </div>
-          <p className="text-sm text-gray-300">{originalPostContent}</p>
-          {originalPostMediaUrl && (
-            <img
-              src={getImageUrl(originalPostMediaUrl, "post-images")}
-              alt="Original post media"
-              className="rounded-lg w-full h-auto mt-3"
-            />
-          )}
         </div>
-
-        {/* Reblogged At Timestamp */}
-        <p className="text-xs text-gray-500 mt-4">
+  
+        <p className="text-white">{originalPostContent}</p>
+        {originalPostMediaUrl && (
+          <img
+            src={getImageUrl(originalPostMediaUrl, "post-images")}
+            alt="Original post media"
+            className="rounded-lg w-full h-auto mt-2"
+          />
+        )}
+  
+        <p className="text-sm text-gray-400 mt-2">
           Reblogged at {new Date(rebloggedAt).toLocaleString()}
         </p>
       </CardContent>
-
-      <CardFooter className="flex justify-end items-center border-t border-gray-700 pt-4 px-4">
-        <div className="flex space-x-4">
-          {/* Like Button */}
-          <button
-            onClick={handleLikeClick}
-            className={`flex items-center space-x-2 ${
-              isLiked ? "text-pink-500" : "text-gray-300 hover:text-white"
-            }`}
-          >
-            <Heart size={20} className={isLiked ? "fill-current" : ""} />
-            <span>
-              {likeCount} {likeCount === 1 ? "Like" : "Likes"}
-            </span>
-          </button>
-
-          {/* Comment Button */}
-          <button
-            onClick={toggleComments}
-            className="flex items-center space-x-2 text-gray-300 hover:text-white"
-          >
-            <MessageCircle size={20} />
-            <span>Comments</span>
-          </button>
-        </div>
+  
+      <CardFooter className="flex justify-end items-center space-x-4 border-t border-gray-700 pt-4 px-4">
+        <button
+          onClick={handleLikeClick}
+          className={`flex items-center space-x-2 ${
+            isLiked ? "text-pink-500" : "text-gray-300 hover:text-white"
+          }`}
+        >
+          <Heart size={20} className={isLiked ? "fill-current" : ""} />
+          <span>
+            {likeCount} {likeCount === 1 ? "Like" : "Likes"}
+          </span>
+        </button>
+  
+        <button
+          onClick={toggleComments}
+          className="flex items-center space-x-2 text-gray-300 hover:text-white"
+        >
+          <MessageCircle size={20} />
+          <span>Comments</span>
+        </button>
       </CardFooter>
-
+  
       {/* Comments Section */}
       {showComments && (
         <div className="p-4 mt-4 border-t border-gray-700">
           <h4 className="text-gray-400 mb-4">Comments</h4>
-
-          {/* Fetch and display comments */}
+  
+          {/* Comments list */}
           {comments.map((comment) => (
             <div
               key={comment.commentId}
               className="flex items-start mb-4 border-b border-gray-700 pb-2"
             >
-              <div className="ml-3">
+              <div className="flex-grow">
                 <p className="text-sm text-white font-medium">
                   @{comment.bloggerUsername}
                 </p>
@@ -172,24 +160,23 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
               </div>
               {currentUser?.username === comment.bloggerUsername && (
                 <button
-                  onClick={() =>
-                    deleteCommentMutation.mutate(comment.commentId)
-                  }
-                  className="text-red-500 text-sm ml-auto"
+                  onClick={() => deleteCommentMutation.mutate(comment.commentId)}
+                  className="ml-4 text-red-500 hover:text-red-700"
+                  aria-label="Delete Comment"
                 >
                   <Trash2 size={20} />
                 </button>
               )}
             </div>
           ))}
-
+  
           {/* Add comment form */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
               if (commentText.trim()) {
                 createCommentMutation.mutate(commentText);
-                setCommentText(""); // Clear input field
+                setCommentText("");
               }
             }}
           >
