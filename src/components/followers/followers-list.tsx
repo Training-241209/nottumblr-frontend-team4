@@ -48,14 +48,6 @@ const FollowersList: React.FC<FollowersListProps> = ({ bloggerId }) => {
             </Avatar>
             <p className="text-gray-800 dark:text-gray-300">@{follower.username}</p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => handleDeleteFollower(follower.username)}
-            disabled={deleteFollowerMutation.isPending}
-          >
-            <Trash2 className="h-4 w-4 text-gray-400 hover:text-red-400" />
-          </Button>
         </li>
       ))}
     </ul>
