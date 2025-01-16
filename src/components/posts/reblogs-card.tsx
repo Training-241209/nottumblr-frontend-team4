@@ -11,6 +11,8 @@ import { useLikes } from "@/components/posts/hooks/use-likes";
 import { useComments } from "@/components/posts/hooks/use-comments";
 import { useAuth } from "../auth/hooks/use-auth";
 import { useRouter } from "@tanstack/react-router";
+import { useDeleteReblog } from "@/components/posts/hooks/use-delete-reblogs";
+
 
 interface ReblogCardProps {
   reblogId: number;
@@ -23,6 +25,8 @@ interface ReblogCardProps {
   originalPostProfilePictureUrl?: string | null; // Original post blogger's profile picture
   originalPostMediaUrl?: string | null; // Original post media URL
   onProfileClick?: (username: string) => void;
+  onDelete?: (postId: number) => void;
+  currentuser?: string;
 }
 
 const ReblogCard: React.FC<ReblogCardProps> = ({
@@ -36,6 +40,8 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
   originalPostProfilePictureUrl,
   originalPostMediaUrl,
   onProfileClick,
+  onDelete,
+  currentuser
 }) => {
   const { getImageUrl } = useS3Get();
   const { likeCount, isLiked, currentUserLikeId, addLike, removeLike } =
@@ -161,7 +167,6 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
             {likeCount} {likeCount === 1 ? "Like" : "Likes"}
           </span>
         </button>
-
         <button
           onClick={toggleComments}
           className="flex items-center space-x-2 text-gray-800 hover:text-gray-300 dark:text-gray-300 dark:hover:text-white"
@@ -169,6 +174,17 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
           <MessageCircle size={20} />
           <span>Comments</span>
         </button>
+        {" "}
+        {/* Conditionally show the trash icon if the current user owns the post */}
+        {currentUser?.username === bloggerUsername && onDelete && (
+          <button
+            onClick={() => onDelete(reblogId)}
+            className="flex items-center space-x-1 text-red-500 hover:text-red-700"
+            aria-label="Delete Post"
+          >
+            <Trash2 size={12} />
+          </button>
+        )}
       </CardFooter>
 
       {/* Comments Section */}

@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../auth/hooks/use-auth";
 import { useRouter } from "@tanstack/react-router";
+import { useDeletePost } from "@/components/posts/hooks/use-delete-posts";
 
 interface PostCardProps {
   postId: number;
@@ -35,6 +36,8 @@ interface PostCardProps {
   isReblog?: boolean;
   originalUsername?: string;
   originalPostContent?: string;
+  onDelete?: (postId: number) => void;
+  currentUser?: string;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -49,6 +52,7 @@ const PostCard: React.FC<PostCardProps> = ({
   isReblog,
   originalUsername,
   originalPostContent,
+  onDelete
 }) => {
   const [showComments, setShowComments] = useState(false);
   const [showReblogModal, setShowReblogModal] = useState(false);
@@ -185,6 +189,16 @@ const PostCard: React.FC<PostCardProps> = ({
             <Repeat size={20} />
             <span>Reblog</span>
           </button>
+
+          {currentUser?.username === username && onDelete && (
+            <button
+              onClick={() => onDelete(postId)}
+              className="flex items-center space-x-1 text-red-500 hover:text-red-700"
+              aria-label="Delete Post"
+            >
+              <Trash2 size={12} />
+            </button>
+          )}
         </CardFooter>
 
         {/* Comments Section */}

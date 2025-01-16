@@ -5,6 +5,8 @@ import { useAuth } from "@/components/auth/hooks/use-auth"; // Authentication ho
 import PostCard from "../posts/posts-card"; // Component for posts
 import ReblogCard from "../posts/reblogs-card"; // Component for reblogs
 import { toast } from "sonner"; // For notifications
+import { useDeletePost } from "@/components/posts/hooks/use-delete-posts"; // Hook for deleting posts
+import { useDeleteReblog } from "../posts/hooks/use-delete-reblogs";
 
 interface Post {
   postId: number;
@@ -44,6 +46,18 @@ const PersonalTimeline: React.FC = () => {
   const { data: user } = useAuth();
   const { data: posts, isLoading: postsLoading, error: postsError } = usePosts();
   const { data: reblogs, isLoading: reblogsLoading, error: reblogsError } = useReblogs();
+
+  const deletePostMutation = useDeletePost();
+  const deleteReblogMutation = useDeleteReblog();
+
+
+  const handleDeletePost = (postId: number) => {
+    deletePostMutation.mutate(postId);
+  };
+
+  function handleDeleteReblog(reblogId: number) {
+    deleteReblogMutation.mutate(reblogId);
+  }
 
   // Ensure the user is authenticated
   if (!user) {
@@ -98,6 +112,8 @@ const PersonalTimeline: React.FC = () => {
                 onProfileClick={(username) => {
                   window.location.href = `/profile/${username}`;
                 }}
+                currentUser={user?.username} // pass in from your authentication data
+                onDelete={handleDeletePost}
               />
             ) : (
                 <ReblogCard
@@ -114,6 +130,8 @@ const PersonalTimeline: React.FC = () => {
                 onProfileClick={(username) => {
                   window.location.href = `/profile/${username}`;
                 }}
+                onDelete={handleDeleteReblog}
+                currentuser={user?.username}
               />
             )
           )
