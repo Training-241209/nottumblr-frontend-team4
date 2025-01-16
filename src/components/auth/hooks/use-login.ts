@@ -22,7 +22,11 @@ export function useLogin() {
      * 2. Show a success toast message
      * 3. Navigate to the dashboard
      */
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const token = data.token;
+
+      console.log("JWT Token after login:", token);
+      
       queryClient.invalidateQueries({ // <-- invalidating what we had before..
         queryKey: ["auth"], // <---------------- with this key
       });
