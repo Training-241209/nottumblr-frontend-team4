@@ -1,10 +1,9 @@
 import React from "react";
-import { usePosts } from "@/components/posts/hooks/use-posts"; // Hook for fetching posts
-import { useReblogs } from "@/components/posts/hooks/use-reblogs"; // Hook for fetching reblogs
-import { useAuth } from "@/components/auth/hooks/use-auth"; // Authentication hook
-import PostCard from "../posts/posts-card"; // Component for posts
-import ReblogCard from "../posts/reblogs-card"; // Component for reblogs
-import { toast } from "sonner"; // For notifications
+import { useAllPosts } from "@/components/posts/hooks/use-allposts"; // Hook for fetching all posts
+import { useAllReblogs } from "@/components/posts/hooks/use-allreblogs"; // Hook for fetching all reblogs
+import PostCard from "@/components/posts/posts-card"; 
+import ReblogCard from "@/components/posts/reblogs-card";
+import { toast } from "sonner";
 
 interface Post {
   postId: number;
@@ -25,6 +24,8 @@ interface Reblog {
   comment?: string;
   rebloggedAt: string;
   profilePictureUrl?: string;
+  originalPostProfilePictureUrl?: string;
+  originalPostMediaUrl?: string;
 }
 
 // Type guard for Post
@@ -32,29 +33,33 @@ const isPost = (item: Post | Reblog): item is Post => {
   return "postId" in item;
 };
 
+// Helper to get timestamp for sorting
 const getTimestamp = (item: Post | Reblog): string => {
-  return "createdAt" in item ? item.createdAt : item.rebloggedAt;
+  return isPost(item) ? item.createdAt : item.rebloggedAt;
 };
 
 const CommunityTimeline: React.FC<{ communityName: string }> = ({ communityName }) => {
-  const { data: user } = useAuth();
-  const { data: posts, isLoading: postsLoading, error: postsError } = usePosts();
-  const { data: reblogs, isLoading: reblogsLoading, error: reblogsError } = useReblogs();
+  // Fetch all posts and all reblogs
+  const {
+    data: posts = [],
+    isLoading: postsLoading,
+    error: postsError,
+  } = useAllPosts();
 
-  if (!user) {
-    toast.error("Please log in to view the community timeline.");
-    return (
-      <div className="text-center py-4 text-white">
-        Please log in to view the community timeline.
-      </div>
-    );
-  }
+  const {
+    data: reblogs = [],
+    isLoading: reblogsLoading,
+    error: reblogsError,
+  } = useAllReblogs();
 
+  // Display loading state
   if (postsLoading || reblogsLoading) {
     return <div className="text-center py-4 text-white">Loading...</div>;
   }
 
+  // Handle errors
   if (postsError || reblogsError) {
+    toast.error("Error loading community timeline.");
     return (
       <div className="text-center py-4 text-red-500">
         Error loading community timeline.
@@ -62,19 +67,29 @@ const CommunityTimeline: React.FC<{ communityName: string }> = ({ communityName 
     );
   }
 
-  // Filter items based on community hashtag
+  /**
+   * Filter posts and reblogs by the community hashtag.
+   * For posts, we check `post.content`.
+   * For reblogs, we check both `reblog.comment` and `reblog.originalPostContent`.
+   */
   const timelineItems = [
-    ...(posts || [])
-      .filter((post) => post.content.includes(`#${communityName}`))
-      .map((post) => ({ ...post, type: "post" })),
-    ...(reblogs || [])
-      .filter((reblog) => reblog.comment?.includes(`#${communityName}`) || reblog.originalPostContent.includes(`#${communityName}`))
-      .map((reblog) => ({ ...reblog, type: "reblog" })),
+    ...(posts as Post[])
+      .filter(post => post.content.includes(`#${communityName}`))
+      .map(post => ({ ...post, type: "post" as const })),
+      
+    ...(reblogs as Reblog[])
+      .filter(reblog =>
+        reblog.comment?.includes(`#${communityName}`) ||
+        reblog.originalPostContent.includes(`#${communityName}`)
+      )
+      .map(reblog => ({ ...reblog, type: "reblog" as const }))
   ];
 
-  // Sort items by timestamp
-  const sortedItems = timelineItems.sort((a, b) =>
-    new Date(getTimestamp(b)).getTime() - new Date(getTimestamp(a)).getTime()
+  // Sort items by timestamp (descending)
+  const sortedItems = timelineItems.sort(
+    (a, b) =>
+      new Date(getTimestamp(b)).getTime() -
+      new Date(getTimestamp(a)).getTime()
   );
 
   return (
@@ -93,9 +108,9 @@ const CommunityTimeline: React.FC<{ communityName: string }> = ({ communityName 
                 createdAt={item.createdAt}
                 bloggerId={item.bloggerId}
                 profilePictureUrl={item.profilePictureUrl}
-                onProfileClick={(username) => {
-                  window.location.href = `/profile/${username}`;
-                }}
+                onProfileClick={(username) =>
+                  (window.location.href = `/profile/${username}`)
+                }
               />
             ) : (
               <ReblogCard
@@ -106,17 +121,21 @@ const CommunityTimeline: React.FC<{ communityName: string }> = ({ communityName 
                 originalPostUsername={item.originalPostUsername}
                 comment={item.comment}
                 rebloggedAt={item.rebloggedAt}
-                profilePictureUrl={item.bloggerProfilePictureUrl}
-                originalPostProfilePictureUrl={item.originalPostProfilePictureUrl}
+                profilePictureUrl={item.profilePictureUrl}
+                originalPostProfilePictureUrl={
+                  item.originalPostProfilePictureUrl
+                }
                 originalPostMediaUrl={item.originalPostMediaUrl}
-                onProfileClick={(username) => {
-                  window.location.href = `/profile/${username}`;
-                }}
+                onProfileClick={(username) =>
+                  (window.location.href = `/profile/${username}`)
+                }
               />
             )
           )
         ) : (
-          <div className="text-center py-4 text-white">No items in #{communityName} community.</div>
+          <div className="text-center py-4 text-white">
+            No items in #{communityName} community.
+          </div>
         )}
       </div>
     </div>

@@ -2,39 +2,51 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios-config";
 import { toast } from "sonner";
 
-// Input interface - what you send to the API
-interface CreatePostInput {
+interface Post {
   content: string;
-  mediaUrl?: string | null;
-  mediaType?: string | null;
-}
-
-// Response interface - what you get back from the API
-interface CreatePostResponse {
-  postId: number;
-  username: string;
-  content: string;
-  mediaUrl: string | null;
-  mediaType: string | null;
-  createdAt: string;
-  bloggerId: number;
+  mediaUrl?: string;
+  mediaType?: string;
 }
 
 export function useCreatePost() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (post: CreatePostInput) => {
-      const resp = await axiosInstance.post<CreatePostResponse>("/posts/create", post);
-      return resp.data;
+  // Helper function to retrieve the token for Authorization
+  const getAuthorizationHeaders = () => {
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      toast.error("You are not authenticated. Please log in.");
+      throw new Error("Missing JWT token");
+    }
+    return {
+      Authorization: `Bearer ${token}`,
+    };
+  };
+
+  const createPostMutation = useMutation({
+    mutationFn: async (newPost: Post) => {
+      try {
+        const response = await axiosInstance.post<Post>("/posts/create", newPost, {
+          headers: getAuthorizationHeaders(),
+        });
+        return response.data;
+      } catch (error: any) {
+        console.error("Error creating post:", error);
+        throw error;
+      }
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       toast.success("Post created successfully!");
     },
     onError: (error: any) => {
-      console.error("Error creating post:", error);
-      toast.error(error.response?.data?.message || "Failed to create post.");
+      console.error("Error in create post mutation:", error);
+      toast.error(error.response?.data?.error || "Failed to create post.");
     },
   });
+
+  return {
+    mutate: createPostMutation.mutate,   // Explicitly returning 'mutate'
+    status: createPostMutation.status,  // Returning 'status' for tracking
+  };
 }

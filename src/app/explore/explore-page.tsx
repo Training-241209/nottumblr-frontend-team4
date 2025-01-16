@@ -14,13 +14,17 @@ export default function ExplorePage() {
   const { data: bloggers = [], isLoading, isError } = useTopBloggers();
   const { data: authUser } = useAuth();
   const router = useRouter();
-  const [followedUsers, setFollowedUsers] = useState<Record<number, boolean>>({});
+  const [followedUsers, setFollowedUsers] = useState<Record<number, boolean>>(
+    {}
+  );
 
   const BUCKET_NAME = "profilepicturesfbe74-dev";
   const BUCKET_REGION = "us-east-1";
   const BUCKET_URL = `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com`;
 
-  const constructProfilePictureUrl = (key: string | null | undefined): string => {
+  const constructProfilePictureUrl = (
+    key: string | null | undefined
+  ): string => {
     return key ? `${BUCKET_URL}/${key}` : "/default-avatar.png";
   };
 
@@ -99,7 +103,10 @@ export default function ExplorePage() {
     if (authUser?.username === username) {
       router.navigate({ to: "/dashboard/profile" });
     } else {
-      router.navigate({ to: "/dashboard/other-profile/$username", params: { username } });
+      router.navigate({
+        to: "/dashboard/other-profile/$username",
+        params: { username },
+      });
     }
   };
 
@@ -125,7 +132,11 @@ export default function ExplorePage() {
             "#TV Shows",
             "#Culture",
           ].map((tag, index) => (
-            <Badge key={index} variant="outline" className="cursor-pointer hover:bg-gray-100">
+            <Badge
+              key={index}
+              variant="outline"
+              className="cursor-pointer hover:bg-gray-100"
+            >
               {tag}
             </Badge>
           ))}
@@ -143,30 +154,45 @@ export default function ExplorePage() {
                 <CardHeader className="flex items-center space-x-4">
                   <Avatar>
                     <AvatarImage
-                      src={constructProfilePictureUrl(blogger.profilePictureUrl)}
+                      src={constructProfilePictureUrl(
+                        blogger.profilePictureUrl
+                      )}
                       alt={blogger.username}
                     />
-                    <AvatarFallback>{blogger.username.charAt(0).toUpperCase()}</AvatarFallback>
+                    <AvatarFallback>
+                      {blogger.username.charAt(0).toUpperCase()}
+                    </AvatarFallback>
                   </Avatar>
                   <div>
                     <button
-                      className="font-medium text-neutral-300 hover:underline"
+                      className="font-medium text-gray-800 dark:text-neutral-300 hover:text-gray-600 dark:hover:text-white hover:underline"
                       onClick={() => handleProfileClick(blogger.username)}
                     >
                       @{blogger.username}
                     </button>
-                    <p className="text-sm text-gray-500">{blogger.followerCount} followers</p>
+                    <p className="text-sm text-gray-500">
+                      {blogger.followerCount} followers
+                    </p>
                   </div>
                 </CardHeader>
                 <CardFooter>
                   {authUser?.bloggerId !== blogger.bloggerId && (
                     <Button
                       size="sm"
-                      className="w-full"
+                      className={`w-full ${
+                        followedUsers[blogger.bloggerId]
+                          ? "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                          : ""
+                      }`}
                       onClick={() =>
-                        handleFollowToggle(blogger.bloggerId, followedUsers[blogger.bloggerId])
+                        handleFollowToggle(
+                          blogger.bloggerId,
+                          followedUsers[blogger.bloggerId]
+                        )
                       }
-                      variant={followedUsers[blogger.bloggerId] ? "outline" : "default"}
+                      variant={
+                        followedUsers[blogger.bloggerId] ? "outline" : "default"
+                      }
                     >
                       {followedUsers[blogger.bloggerId] ? "Unfollow" : "Follow"}
                     </Button>

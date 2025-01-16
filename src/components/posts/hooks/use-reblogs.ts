@@ -50,7 +50,7 @@ export function useReblogs(): UseQueryResult<Reblog[]> {
     },
     staleTime: 1000 * 60 * 5, // Cache the data for 5 minutes
     gcTime: 1000 * 60 * 10, // Garbage collect after 10 minutes
-    refetchOnWindowFocus: false, // Do not refetch on window focus
-    refetchOnReconnect: false, // Do not refetch on reconnect
+    refetchOnWindowFocus: true, // Do not refetch on window focus
+    refetchOnReconnect: true, // Do not refetch on reconnect
   });
 }

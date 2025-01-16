@@ -111,10 +111,10 @@ const PostCard: React.FC<PostCardProps> = ({
 
   return (
     <>
-      <Card className="bg-gray-800 text-white relative overflow-hidden rounded-lg">
+      <Card className="bg-neutral text-white relative overflow-hidden rounded-lg">
         {/* Reblog Header */}
         {isReblog && originalUsername && (
-          <div className="bg-gray-700 text-gray-300 text-sm p-2 pl-4">
+          <div className="bg-gray-700 text-black text-sm p-2 pl-4">
             Reblogged from @{originalUsername}
           </div>
         )}
@@ -124,14 +124,14 @@ const PostCard: React.FC<PostCardProps> = ({
           onClick={handleProfileClick}
           className="block transition-colors duration-200"
         >
-          <CardHeader className="flex flex-row items-center border-b border-gray-700 p-4 hover:bg-gray-700">
+          <CardHeader className="flex flex-row items-center border-b border-gray-700 p-4 hover:bg-gray-300 dark:hover:bg-gray-700">
             <img
               src={getImageUrl(profilePictureUrl, "", "/default-avatar.png")}
               alt={`${username}'s avatar`}
               className="w-12 h-12 rounded-full object-cover"
             />
             <div className="ml-4">
-              <p className="text-gray-400">@{username}</p>
+              <p className="text-black dark:text-neutral-200">@{username}</p>
             </div>
           </CardHeader>
         </a>
@@ -142,7 +142,7 @@ const PostCard: React.FC<PostCardProps> = ({
               {originalPostContent}
             </p>
           )}
-          <p>{content}</p>
+          <p className="text-black dark:text-neutral-200 pb-4">{content}</p>
           {mediaUrl && mediaType === "image" && (
             <img
               src={getImageUrl(mediaUrl, "post-images")}
@@ -159,7 +159,9 @@ const PostCard: React.FC<PostCardProps> = ({
           <button
             onClick={handleLikeClick}
             className={`flex items-center space-x-2 ${
-              isLiked ? "text-pink-500" : "text-gray-300 hover:text-white"
+              isLiked
+                ? "text-pink-500"
+                : "text-gray-800 hover:text-gray-300 dark:text-gray-300 dark:hover:text-white"
             }`}
           >
             <Heart size={20} className={isLiked ? "fill-current" : ""} />
@@ -170,7 +172,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
           <button
             onClick={toggleComments}
-            className="flex items-center space-x-2 text-gray-300 hover:text-white"
+            className="flex items-center space-x-2 text-gray-800 hover:text-gray-300 dark:text-gray-300 dark:hover:text-white"
           >
             <MessageCircle size={20} />
             <span>Comments</span>
@@ -178,29 +180,32 @@ const PostCard: React.FC<PostCardProps> = ({
 
           <button
             onClick={() => setShowReblogModal(true)}
-            className="flex items-center space-x-2 text-gray-300 hover:text-white"
+            className="flex items-center space-x-2 text-gray-800 hover:text-gray-300 dark:text-gray-300 dark:hover:text-white"
           >
             <Repeat size={20} />
             <span>Reblog</span>
           </button>
         </CardFooter>
 
+        {/* Comments Section */}
         {showComments && (
-          <div className="p-4 mt-4 border-t border-gray-700">
-            <h4 className="text-gray-400 mb-4">Comments</h4>
+          <div className="p-4 mt-4 border-t border-gray-300 dark:border-gray-700">
+            <h4 className="text-gray-600 dark:text-gray-400 mb-4">Comments</h4>
 
-            {/* Fetch and display comments */}
+            {/* Comments list */}
             {comments.map((comment) => (
               <div
                 key={comment.commentId}
-                className="flex items-start mb-4 border-b border-gray-700 pb-2"
+                className="flex items-start mb-4 border-b border-gray-300 dark:border-gray-700 pb-2"
               >
                 <div className="flex-grow">
-                  <p className="text-sm text-white font-medium">
+                  <p className="text-sm text-black dark:text-white font-medium">
                     @{comment.bloggerUsername}
                   </p>
-                  <p className="text-sm text-gray-300">{comment.content}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-sm text-black dark:text-gray-300">
+                    {comment.content}
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-500">
                     {new Date(comment.createdAt).toLocaleString()}
                   </p>
                 </div>
@@ -222,7 +227,7 @@ const PostCard: React.FC<PostCardProps> = ({
                 e.preventDefault();
                 if (commentText.trim()) {
                   createComment(commentText);
-                  setCommentText(""); // Clear input field after submission
+                  setCommentText("");
                 }
               }}
             >
@@ -232,11 +237,11 @@ const PostCard: React.FC<PostCardProps> = ({
                   placeholder="Write a comment..."
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  className="flex-grow p-2 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-grow p-2 bg-white dark:bg-gray-800 text-black dark:text-white rounded-md border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button
                   type="submit"
-                  className="ml-2 text-neutral-200 hover:text-white"
+                  className="ml-2 text-gray-800 hover:text-gray-600 dark:text-neutral-200 dark:hover:text-white"
                 >
                   <SendHorizontal size={20} />
                 </button>
@@ -248,12 +253,14 @@ const PostCard: React.FC<PostCardProps> = ({
 
       {showReblogModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-neutral-800 text-white relative overflow-hidden rounded-lg w-full max-w-md shadow-xl">
-            <div className="border-b border-neutral-700 p-4 flex justify-between items-center">
-              <h2 className="text-xl font-semibold text-white">Reblog Post</h2>
+          <div className="bg-white dark:bg-neutral-800 text-black dark:text-white relative overflow-hidden rounded-lg w-full max-w-md shadow-xl">
+            <div className="border-b border-gray-200 dark:border-neutral-700 p-4 flex justify-between items-center">
+              <h2 className="text-xl font-semibold text-black dark:text-white">
+                Reblog Post
+              </h2>
               <button
                 onClick={() => setShowReblogModal(false)}
-                className="text-gray-400 hover:text-white hover:bg-gray-700 p-1 rounded"
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 p-1 rounded"
               >
                 <X size={24} />
               </button>
@@ -264,16 +271,16 @@ const PostCard: React.FC<PostCardProps> = ({
                 placeholder="Add a comment to your reblog (optional)"
                 value={reblogComment}
                 onChange={(e) => setReblogComment(e.target.value)}
-                className="w-full mb-4 bg-neutral-700 text-white border-none min-h-[100px]"
+                className="w-full mb-4 bg-gray-100 dark:bg-neutral-700 text-black dark:text-white border border-gray-300 dark:border-neutral-600 min-h-[100px] focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
-            <div className="border-t border-neutral-700 p-4 flex justify-end space-x-4">
+            <div className="border-t border-gray-200 dark:border-neutral-700 p-4 flex justify-end space-x-4">
               <Button
                 onClick={handleReblogSubmit}
                 variant="outline"
                 size="lg"
-                className="!bg-white text-black hover:bg-black hover:text-white"
+                className="!bg-white dark:!bg-neutral-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 border border-gray-300 dark:border-neutral-600"
               >
                 Reblog
               </Button>

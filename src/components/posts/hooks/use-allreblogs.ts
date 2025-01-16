@@ -8,5 +8,7 @@ export function useAllReblogs() {
       const response = await axiosInstance.get("/reblogs/all");
       return response.data;
     },
+    refetchOnWindowFocus: true,  
+    refetchOnMount: true, 
   });
 }

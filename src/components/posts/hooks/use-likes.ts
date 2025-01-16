@@ -11,68 +11,123 @@ interface Like {
 
 export function useLikes(entityId: number, type: "post" | "reblog") {
   const queryClient = useQueryClient();
-  const { data: user } = useAuth();
+  const { data: authUser } = useAuth();
+  const currentUser = authUser?.username;
+  console.log("Current user from useAuth:", currentUser);
 
-  // Define base endpoints based on type
+  const queryKey = ["likes", type, entityId];
+
   const baseEndpoint =
     type === "post" ? `/posts/${entityId}/likes` : `/posts/reblogs/${entityId}/likes`;
-
   const likeEndpoint =
     type === "post"
       ? `/posts/${entityId}/likes/like`
       : `/posts/reblogs/${entityId}/likes/like`;
-
   const unlikeEndpoint =
     type === "post"
-      ? `/posts/${entityId}/likes/`
+      ? `/posts/${entityId}/likes`
       : `/posts/reblogs/${entityId}/likes`;
 
-  // Get likes for the entity
-  const { data: likes } = useQuery({
-    queryKey: ["likes", type, entityId],
+  const getAuthorizationHeaders = () => {
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      toast.error("You are not authenticated. Please log in.");
+      throw new Error("Missing JWT token");
+    }
+    return {
+      Authorization: `Bearer ${token}`,
+    };
+  };
+
+  const { data: likes = [] } = useQuery<Like[]>({
+    queryKey,
     queryFn: async () => {
-      const response = await axiosInstance.get<Like[]>(baseEndpoint);
+      const response = await axiosInstance.get<Like[]>(baseEndpoint, {
+        headers: getAuthorizationHeaders(),
+      });
+      console.log("Fetched likes:", response.data);
       return response.data;
     },
   });
 
-  // Create like mutation
-  const { mutate: addLike } = useMutation({
+  const currentUserLike = likes.find((like) => like.username === currentUser);
+  console.log("Current user like:", currentUserLike);
+
+  const addLike = useMutation({
     mutationFn: async () => {
-      return axiosInstance.post<Like>(likeEndpoint);
+      const response = await axiosInstance.post<Like>(likeEndpoint, {}, {
+        headers: getAuthorizationHeaders(),
+      });
+      return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["likes", type, entityId] });
-      toast.success("Liked successfully!");
+    onMutate: async () => {
+      if (!currentUser) {
+        console.warn("Current user is not available for optimistic update.");
+        return;
+      }
+      console.log("Optimistic update: Adding like...");
+      await queryClient.cancelQueries({ queryKey });
+      const previousLikes = queryClient.getQueryData<Like[]>(queryKey) || [];
+      queryClient.setQueryData(queryKey, [
+        ...previousLikes,
+        { likeId: Date.now(), username: currentUser, entityId },
+      ]);
+      return { previousLikes };
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data || "Failed to like");
+    onError: (error, _, context: any) => {
+      console.error("Error adding like:", error);
+      queryClient.setQueryData(queryKey, context?.previousLikes);
+      toast.error("Failed to like the post.");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
     },
   });
 
-  // Remove like mutation
-  const { mutate: removeLike } = useMutation({
+  const removeLike = useMutation({
     mutationFn: async (likeId: number) => {
-      return axiosInstance.delete(`${unlikeEndpoint}/${likeId}`);
+      const response = await axiosInstance.delete(`${unlikeEndpoint}/${likeId}`, {
+        headers: getAuthorizationHeaders(),
+      });
+      return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["likes", type, entityId] });
-      toast.success("Like removed successfully");
+    onMutate: async (likeId: number) => {
+      if (!currentUser) {
+        console.warn("Current user is not available for optimistic update.");
+        return;
+      }
+      console.log("Optimistic update: Removing like...");
+      await queryClient.cancelQueries({ queryKey });
+      const previousLikes = queryClient.getQueryData<Like[]>(queryKey) || [];
+      queryClient.setQueryData(
+        queryKey,
+        previousLikes.filter((like) => like.likeId !== likeId)
+      );
+      return { previousLikes };
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data || "Failed to remove like");
+    onError: (error, _, context: any) => {
+      console.error("Error removing like:", error);
+      queryClient.setQueryData(queryKey, context?.previousLikes);
+      toast.error("Failed to remove like.");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
     },
   });
 
-  // Find current user's like if it exists
-  const currentUserLike = likes?.find((like) => like.username === user?.username);
-
-  return {
-    likes: likes || [],
-    likeCount: likes?.length || 0,
+  console.log("Likes hook state:", {
+    likes,
+    likeCount: likes.length,
     isLiked: !!currentUserLike,
     currentUserLikeId: currentUserLike?.likeId,
-    addLike,
-    removeLike,
+  });
+
+  return {
+    likes,
+    likeCount: likes.length,
+    isLiked: !!currentUserLike,
+    currentUserLikeId: currentUserLike?.likeId,
+    addLike: addLike.mutate,
+    removeLike: removeLike.mutate,
   };
 }

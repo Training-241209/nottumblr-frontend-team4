@@ -61,8 +61,8 @@ const CreatePostDialog: React.FC = () => {
 
     createPost({
       content: content.trim(),
-      mediaUrl: imageUrl || null,
-      mediaType: imageUrl ? "image" : null,
+      mediaUrl: imageUrl || undefined,
+      mediaType: imageUrl ? "image" : undefined,
     });
 
     // Reset fields after submission

@@ -9,14 +9,28 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: async () => {
-      const resp = await axiosInstance.post("/auth/logout");
+      const token = localStorage.getItem("jwt");
+      const resp = await axiosInstance.post("/auth/logout", {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return resp.data;
     },
     onSuccess: () => {
       toast.success("Logged out successfully");
-      queryClient.invalidateQueries();
+
+      console.log("logging out.");
+
+      // Invalidate all user-related queries
+      queryClient.clear();
+      
+      // Clear local storage and cookies
       document.cookie = "jwt=; Max-Age=0; path=/;";
+      localStorage.removeItem("jwt");
       setAuthorizationToken(null);
+
+      // Navigate to the login page
       router.navigate({ to: "/auth/login" });
     },
     onError: () => {

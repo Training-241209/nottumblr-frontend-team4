@@ -24,13 +24,17 @@ const TopBloggersCard: React.FC = () => {
   };
 
   return (
-    <Card className="bg-gray-800 text-white w-full max-w-md mx-auto p-1.5">
-      <CardHeader className="border-b border-gray-700 pb-1">
-        <CardTitle className="text-sm text-gray-300">Top Bloggers</CardTitle>
+    <Card className="bg-neutral text-black dark:text-white w-full max-w-md mx-auto p-1.5">
+      <CardHeader className="border-b border-gray-300 dark:border-gray-700 pb-1">
+        <CardTitle className="text-sm text-gray-600 dark:text-gray-300 text-center">
+          Top Bloggers
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-1.5">
         {isLoading && (
-          <p className="text-xs text-gray-400">Loading top bloggers...</p>
+          <p className="text-xs text-gray-600 dark:text-gray-400">
+            Loading top bloggers...
+          </p>
         )}
         {isError && (
           <p className="text-xs text-red-500">Failed to load top bloggers.</p>
@@ -41,7 +45,7 @@ const TopBloggersCard: React.FC = () => {
               <li
                 key={blogger.bloggerId}
                 className={`flex items-center space-x-2 py-1.5 ${
-                  index < bloggers.length - 1 ? "border-b border-gray-700" : ""
+                  index < bloggers.length - 1 ? "border-b border-gray-300 dark:border-gray-700" : ""
                 }`}
               >
                 <Avatar className="w-9 h-9">
@@ -49,18 +53,18 @@ const TopBloggersCard: React.FC = () => {
                     src={getProfilePictureUrl(blogger.profilePictureUrl)}
                     alt={blogger.username}
                   />
-                  <AvatarFallback className="bg-gray-700 text-white">
+                  <AvatarFallback className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white">
                     {blogger.username.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <button
-                    className="font-medium text-neutral-300 hover:underline text-xs"
+                    className="font-medium text-gray-800 dark:text-neutral-300 hover:text-gray-600 dark:hover:text-white hover:underline text-xs"
                     onClick={() => handleProfileClick(blogger.username)}
                   >
                     @{blogger.username}
                   </button>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
                     {blogger.followerCount} followers
                   </p>
                 </div>

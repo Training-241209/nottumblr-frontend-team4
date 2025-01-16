@@ -34,7 +34,7 @@ const FollowersList: React.FC<FollowersListProps> = ({ bloggerId }) => {
       {followers.map((follower, index) => (
         <li
           key={index}
-          className="p-2 bg-neutral-800 rounded-md flex items-center justify-between"
+          className="p-2 bg-gray-100 dark:bg-neutral-800 rounded-md flex items-center justify-between"
         >
           <div className="flex items-center space-x-3">
             <Avatar className="w-8 h-8">
@@ -46,7 +46,7 @@ const FollowersList: React.FC<FollowersListProps> = ({ bloggerId }) => {
                 {follower.username.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <p className="text-gray-300">@{follower.username}</p>
+            <p className="text-gray-800 dark:text-gray-300">@{follower.username}</p>
           </div>
           <Button
             variant="ghost"

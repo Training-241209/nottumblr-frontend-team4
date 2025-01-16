@@ -40,7 +40,7 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
   const { getImageUrl } = useS3Get();
   const { likeCount, isLiked, currentUserLikeId, addLike, removeLike } =
     useLikes(reblogId, "reblog");
- const {
+  const {
     comments,
     createComment,
     deleteComment,
@@ -82,9 +82,9 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
   };
 
   return (
-    <Card className="bg-gray-800 text-white relative overflow-hidden rounded-lg">
+    <Card className="bg-neutral text-white relative overflow-hidden rounded-lg">
       {/* Reblogged Header */}
-      <div className="bg-gray-700 text-gray-300 text-sm p-2 pl-4">
+      <div className="bg-gray-300 dark:bg-gray-700 text-black dark:text-gray-400 text-sm p-2 pl-4">
         <a
           href={`/profile/${bloggerUsername}`}
           onClick={(e) => {
@@ -92,7 +92,7 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
             console.log("hi");
             handleProfileClick(e, bloggerUsername);
           }}
-          className="font-medium text-white hover:underline"
+          className="font-medium text-black dark:text-white hover:underline"
         >
           @{bloggerUsername}
         </a>{" "}
@@ -102,7 +102,7 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
       <CardContent className="p-4">
         {/* Reblog Comment */}
         {comment && (
-          <p className="italic text-gray-300 mb-4 border-l-2 border-gray-700 pl-4">
+          <p className="italic text-gray-600 dark:text-gray-300 mb-4 border-l-2 border-gray-700 pl-4">
             {comment}
           </p>
         )}
@@ -112,7 +112,7 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
           <a
             href={`/profile/${originalPostUsername}`}
             onClick={(e) => handleProfileClick(e, originalPostUsername)}
-            className="flex items-center hover:bg-gray-700 rounded-lg p-2 transition duration-200"
+            className="flex items-center hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg p-2 transition duration-200"
           >
             <img
               src={getImageUrl(
@@ -124,12 +124,16 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
               className="w-12 h-12 rounded-full object-cover"
             />
             <div className="ml-4">
-              <p className="text-gray-400">@{originalPostUsername}</p>
+              <p className="text-black dark:text-neutral-200">
+                @{originalPostUsername}
+              </p>
             </div>
           </a>
         </div>
 
-        <p className="text-white">{originalPostContent}</p>
+        <p className="text-black dark:text-neutral-200">
+          {originalPostContent}
+        </p>
         {originalPostMediaUrl && (
           <img
             src={getImageUrl(originalPostMediaUrl, "post-images")}
@@ -147,7 +151,9 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
         <button
           onClick={handleLikeClick}
           className={`flex items-center space-x-2 ${
-            isLiked ? "text-pink-500" : "text-gray-300 hover:text-white"
+            isLiked
+              ? "text-pink-500"
+              : "text-gray-800 hover:text-gray-300 dark:text-gray-300 dark:hover:text-white"
           }`}
         >
           <Heart size={20} className={isLiked ? "fill-current" : ""} />
@@ -158,7 +164,7 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
 
         <button
           onClick={toggleComments}
-          className="flex items-center space-x-2 text-gray-300 hover:text-white"
+          className="flex items-center space-x-2 text-gray-800 hover:text-gray-300 dark:text-gray-300 dark:hover:text-white"
         >
           <MessageCircle size={20} />
           <span>Comments</span>
@@ -167,21 +173,23 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
 
       {/* Comments Section */}
       {showComments && (
-        <div className="p-4 mt-4 border-t border-gray-700">
-          <h4 className="text-gray-400 mb-4">Comments</h4>
+        <div className="p-4 mt-4 border-t border-gray-300 dark:border-gray-700">
+          <h4 className="text-gray-600 dark:text-gray-400 mb-4">Comments</h4>
 
           {/* Comments list */}
           {comments.map((comment) => (
             <div
               key={comment.commentId}
-              className="flex items-start mb-4 border-b border-gray-700 pb-2"
+              className="flex items-start mb-4 border-b border-gray-300 dark:border-gray-700 pb-2"
             >
               <div className="flex-grow">
-                <p className="text-sm text-white font-medium">
+                <p className="text-sm text-black dark:text-white font-medium">
                   @{comment.bloggerUsername}
                 </p>
-                <p className="text-sm text-gray-300">{comment.content}</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-sm text-black dark:text-gray-300">
+                  {comment.content}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-500">
                   {new Date(comment.createdAt).toLocaleString()}
                 </p>
               </div>
@@ -203,7 +211,7 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
               e.preventDefault();
               if (commentText.trim()) {
                 createComment(commentText);
-                setCommentText(""); // Clear input field after submission
+                setCommentText("");
               }
             }}
           >
@@ -213,11 +221,11 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
                 placeholder="Write a comment..."
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
-                className="flex-grow p-2 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-grow p-2 bg-white dark:bg-gray-800 text-black dark:text-white rounded-md border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
                 type="submit"
-                className="ml-2 text-neutral-200 hover:text-white"
+                className="ml-2 text-gray-800 hover:text-gray-600 dark:text-neutral-200 dark:hover:text-white"
               >
                 <SendHorizontal size={20} />
               </button>

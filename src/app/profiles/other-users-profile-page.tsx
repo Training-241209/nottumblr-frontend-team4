@@ -38,24 +38,26 @@ const OtherUserProfile = () => {
     queryFn: async () => {
       // Fetch the profile
       const response = await axiosInstance.get(`/bloggers/profile/${username}`);
-      
+
       // Check follow status
-      const followStatusResponse = await axiosInstance.get('/followers/isFollowing', {
-        params: {
-          followerId: authUser?.bloggerId,
-          followeeId: response.data.bloggerId
+      const followStatusResponse = await axiosInstance.get(
+        "/followers/isFollowing",
+        {
+          params: {
+            followerId: authUser?.bloggerId,
+            followeeId: response.data.bloggerId,
+          },
         }
-      });
-  
+      );
+
       // Merge the follow status with the profile data
       return {
         ...response.data,
-        isFollowing: followStatusResponse.data
+        isFollowing: followStatusResponse.data,
       };
     },
-    enabled: !!username && !!authUser
+    enabled: !!username && !!authUser,
   });
-  
 
   // Follow/Unfollow mutations
   const followMutation = useMutation({
@@ -141,7 +143,11 @@ const OtherUserProfile = () => {
             <Button
               onClick={handleFollowToggle}
               variant={user?.isFollowing ? "outline" : "default"}
-              className="ml-4"
+              className={`ml-4 ${
+                user?.isFollowing
+                  ? "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  : ""
+              }`}
               disabled={isFollowLoading}
             >
               {user?.isFollowing ? "Unfollow" : "Follow"}

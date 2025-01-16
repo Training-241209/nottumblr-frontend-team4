@@ -8,5 +8,7 @@ export function useAllPosts() {
       const response = await axiosInstance.get("/posts/all");
       return response.data;
     },
+    refetchOnWindowFocus: true,  
+    refetchOnMount: true, 
   });
 }
