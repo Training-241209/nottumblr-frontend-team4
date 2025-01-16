@@ -90,10 +90,6 @@ const TrendingPostCard: React.FC = () => {
             <MessageCircle size={16} />
             <span>{trendingPost.commentCount}</span>
           </div>
-          <div className="flex items-center space-x-1">
-            <Repeat size={16} />
-            <span>{trendingPost.reblogCount}</span>
-          </div>
         </div>
       </CardContent>
     </Card>
