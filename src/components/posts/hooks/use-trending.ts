@@ -24,4 +24,5 @@ export function useTrendingPost() {
       return response.data; 
     },
   });
+
 }

@@ -1,19 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, MessageCircle, Repeat } from "lucide-react";
 import { useRouter } from "@tanstack/react-router";
 
 import { useS3Get } from "@/components/auth/hooks/use-s3-get";
-import { useTrendingPost } from "@/components/posts/hooks/use-trending"; // NEW HOOK
+import { useTrendingPost } from "@/components/posts/hooks/use-trending"; 
+
 
 const TrendingPostCard: React.FC = () => {
   const { getImageUrl } = useS3Get();
   const router = useRouter();
 
-  // 1) Use the custom hook to get the "trending" post from the backend
   const { data: trendingPost, isLoading, isError } = useTrendingPost();
 
-  // 2) Handle loading / error states
+  
+
   if (isLoading) {
     return (
       <Card className="bg-neutral text-black dark:text-white w-full max-w-md mx-auto p-1.5">
@@ -34,6 +35,7 @@ const TrendingPostCard: React.FC = () => {
       </Card>
     );
   }
+
 
   // 3) Render the trending post data
   const handleProfileClick = (username: string) => {
