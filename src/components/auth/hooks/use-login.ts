@@ -2,7 +2,7 @@ import { toast } from "sonner"; // <-- Toaster
 import { LoginSchema } from "../schemas/login-schema"; // <-- Login Schemas
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"; // <-- TanStack Query
-import { axiosInstance } from "@/lib/axios-config"; // <-- Axios
+import { axiosInstance, setAuthorizationToken } from "@/lib/axios-config"; // <-- Axios
 // Axios gets the data and TanStack Query handles the data
 import { useRouter } from "@tanstack/react-router"; // <-- TanStack Router
 
@@ -26,7 +26,10 @@ export function useLogin() {
       const token = data.token;
 
       console.log("JWT Token after login:", token);
-      
+
+      // Set the token in Axios headers for future requests
+      setAuthorizationToken(token);
+
       queryClient.invalidateQueries({ // <-- invalidating what we had before..
         queryKey: ["auth"], // <---------------- with this key
       });

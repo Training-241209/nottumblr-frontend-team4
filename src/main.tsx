@@ -8,6 +8,8 @@ import { routeTree } from "./routeTree.gen";
 import { ThemeProvider } from "./components/ui/theme-provider";
 import QueryProvider from "./providers/query-provider";
 
+import { setAuthorizationToken } from "@/lib/axios-config"; // Import the function for setting the token
+
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -19,9 +21,20 @@ declare module "@tanstack/react-router" {
   }
 }
 
+const initializeToken = () => {
+  const token = localStorage.getItem("jwt"); // Retrieve the token from localStorage or use cookies
+  if (token) {
+    setAuthorizationToken(token);
+    console.log("Authorization token set during app initialization:", token);
+  } else {
+    console.log("No authorization token found during app initialization.");
+  }
+};
+
 // Render the app
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
+  initializeToken();
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>

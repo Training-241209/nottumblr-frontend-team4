@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/lib/axios-config";
+import { axiosInstance, setAuthorizationToken } from "@/lib/axios-config";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -16,6 +16,7 @@ export function useLogout() {
       toast.success("Logged out successfully");
       queryClient.invalidateQueries();
       document.cookie = "jwt=; Max-Age=0; path=/;";
+      setAuthorizationToken(null);
       router.navigate({ to: "/auth/login" });
     },
     onError: () => {

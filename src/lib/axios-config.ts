@@ -1,6 +1,7 @@
 import axios from "axios";
 
 
+
 export const axiosInstance = axios.create({
     baseURL: "http://18.220.70.231:8081/",
     withCredentials: true,
@@ -8,6 +9,17 @@ export const axiosInstance = axios.create({
         "Content-Type": "application/json",
     }
 })
+
+
+export function setAuthorizationToken(token: string | null) {
+    if (token) {
+        axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        localStorage.setItem("jwt", token);
+    } else {
+        delete axiosInstance.defaults.headers.common["Authorization"];
+        localStorage.removeItem("jwt");
+    }
+}
 
 axiosInstance.interceptors.request.use(
     (config) => {

@@ -18,10 +18,18 @@ export function usePosts(): UseQueryResult<Post[]> {
   return useQuery({
     queryKey: ["posts"],
     queryFn: async () => {
+      const token = localStorage.getItem("jwt"); // Retrieve the token
+      if (!token) {
+        throw new Error("No token found. Please log in.");
+      }
+      
       try {
-        const resp = await axiosInstance.get("/posts/my-posts");
+        const resp = await axiosInstance.get("/posts/my-posts", {
+          headers: {
+            Authorization: `Bearer ${token}`, // Use the retrieved token here
+          },
+        });
         console.log("Posts Response:", resp.data);
-        
         
         const transformedPosts: Post[] = resp.data.map((post: any) => ({
           postId: post.postId,
@@ -31,7 +39,7 @@ export function usePosts(): UseQueryResult<Post[]> {
           mediaType: post.mediaType,
           createdAt: post.createdAt,
           bloggerId: post.bloggerId,
-          profilePictureUrl: post.profilePictureUrl
+          profilePictureUrl: post.profilePictureUrl,
         }));
         
         return transformedPosts;
@@ -41,9 +49,9 @@ export function usePosts(): UseQueryResult<Post[]> {
         throw new Error(e.response?.data?.error || "An error occurred while fetching posts.");
       }
     },
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    staleTime: 1000 * 60 * 5, // Cache the data for 5 minutes
+    gcTime: 1000 * 60 * 10, // Garbage collect after 10 minutes
+    refetchOnWindowFocus: false, // Do not refetch on window focus
+    refetchOnReconnect: false, // Do not refetch on reconnect
   });
 }

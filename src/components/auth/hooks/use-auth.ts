@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/lib/axios-config"; //<-- Axios library to make HTTP requests to your API
+import { axiosInstance, setAuthorizationToken } from "@/lib/axios-config"; //<-- Axios library to make HTTP requests to your API
 import { useQuery, UseQueryResult } from "@tanstack/react-query"; // <-- TanStack Query
 import { useRouter } from "@tanstack/react-router"; //<-- TanStack Router
 
@@ -27,11 +27,20 @@ export function useAuth(): UseQueryResult<AuthUser> { // <-- Defining the custom
       try {
         const resp = await axiosInstance.get("/auth/me"); //<-- Navigate to the /auth/me route if it works | AWAIT function awaiting the promise of the get request
         console.log("API Response:", resp.data);
+
+        const token = resp.headers["authorization"] || null; // Assuming the token is returned in the Authorization header
+        if (token) {
+          setAuthorizationToken(token); // Set the token in Axios headers
+        }
+
         return resp.data;
          //<-- Respond with the data
       } catch (e) {
         console.error(e); // <-- Logging the error
+        setAuthorizationToken(null);
+        
         router.navigate({ to: "/auth/login" }); //<-- If the user is not authenticated we navigate to the login page
+  
         return null; //<-- Return null
       }
     },
