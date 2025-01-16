@@ -37,6 +37,9 @@ export function useCreatePost() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["reblogs"] }); 
+      queryClient.invalidateQueries({ queryKey: ["allReblogs"] }); 
+      queryClient.invalidateQueries({ queryKey: ["allPosts"] });
       toast.success("Post created successfully!");
     },
     onError: (error: any) => {
