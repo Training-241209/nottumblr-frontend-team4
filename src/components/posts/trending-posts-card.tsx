@@ -54,7 +54,11 @@ const TrendingPostCard: React.FC = () => {
         {/* User Info */}
         <div className="flex items-center space-x-2">
           <img
-            src={getImageUrl(trendingPost.profilePictureUrl, "", "/default-avatar.png")}
+            src={getImageUrl(
+              trendingPost.profilePictureUrl,
+              "",
+              "/default-avatar.png"
+            )}
             alt={trendingPost.username}
             className="w-8 h-8 rounded-full"
           />
@@ -81,15 +85,11 @@ const TrendingPostCard: React.FC = () => {
         )}
 
         {/* Interaction Stats */}
-        <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 pt-2">
-          <div className="flex items-center space-x-1">
-            <Heart size={16} />
-            <span>{trendingPost.likeCount}</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <MessageCircle size={16} />
-            <span>{trendingPost.commentCount}</span>
-          </div>
+        <div className="inline-flex w-full justify-end items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 pt-2">
+          <Heart size={16} />
+          <span>{trendingPost.likeCount}</span>
+          <MessageCircle size={16} />
+          <span>{trendingPost.commentCount}</span>
         </div>
       </CardContent>
     </Card>

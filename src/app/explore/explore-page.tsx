@@ -119,31 +119,6 @@ export default function ExplorePage() {
       </div>
 
       <section>
-        <h2 className="text-xl font-semibold mb-4">Trending Communities</h2>
-        <div className="flex flex-wrap gap-2">
-          {[
-            "#Aesthetic",
-            "#Anime",
-            "#Community Spotlight",
-            "#Books & Literature",
-            "#Gaming",
-            "#Art",
-            "#Movies",
-            "#TV Shows",
-            "#Culture",
-          ].map((tag, index) => (
-            <Badge
-              key={index}
-              variant="outline"
-              className="cursor-pointer hover:bg-gray-100"
-            >
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </section>
-
-      <section>
         <h2 className="text-xl font-semibold mb-4">Suggested People</h2>
         {isLoading && <p>Loading suggested people...</p>}
         {isError && <p>Failed to load suggested people.</p>}
