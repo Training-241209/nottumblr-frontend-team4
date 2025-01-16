@@ -241,9 +241,6 @@ export default function SettingsPage() {
         <Button size="lg" onClick={handleSave}>
           Save
         </Button>
-        <Button size="lg" className="!bg-red-600 !text-white hover:!bg-red-700">
-          Delete Account
-        </Button>
       </div>
     </div>
   );
