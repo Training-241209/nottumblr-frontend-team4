@@ -9,6 +9,7 @@ import { ThemeProvider } from "./components/ui/theme-provider";
 import QueryProvider from "./providers/query-provider";
 
 import { setAuthorizationToken } from "@/lib/axios-config"; // Import the function for setting the token
+import { Toaster } from "./components/ui/toaster";
 
 
 // Create a new router instance

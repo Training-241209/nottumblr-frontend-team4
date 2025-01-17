@@ -7,6 +7,7 @@ import { registerSchema, RegisterSchema } from "../schemas/register-schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 export function RegisterForm({
   className,

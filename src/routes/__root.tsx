@@ -22,7 +22,6 @@ export const Route = createRootRoute({
     <>
       <Outlet />
       <Toaster />
-      <TanStackRouterDevtools />
     </>
   ),
   notFoundComponent: NotFoundRedirect,
