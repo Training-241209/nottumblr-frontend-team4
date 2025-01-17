@@ -23,6 +23,12 @@ const TopBloggersCard: React.FC = () => {
     });
   };
 
+    // Sort bloggers by follower count in descending order and get the top 5
+  const topBloggers = bloggers
+    .slice() // Create a shallow copy to avoid mutating the original data
+    .sort((a, b) => b.followerCount - a.followerCount) // Sort by followerCount (descending)
+    .slice(0, 5); // Take the top 5 bloggers
+
   return (
     <Card className="bg-neutral text-black dark:text-white w-full max-w-md mx-auto p-1.5">
       <CardHeader className="border-b border-gray-300 dark:border-gray-700 pb-1">
@@ -41,11 +47,11 @@ const TopBloggersCard: React.FC = () => {
         )}
         {!isLoading && !isError && (
           <ul>
-            {bloggers.map((blogger, index) => (
+            {topBloggers.map((blogger, index) => (
               <li
                 key={blogger.bloggerId}
                 className={`flex items-center space-x-2 py-1.5 ${
-                  index < bloggers.length - 1 ? "border-b border-gray-300 dark:border-gray-700" : ""
+                  index < topBloggers.length - 1 ? "border-b border-gray-300 dark:border-gray-700" : ""
                 }`}
               >
                 <Avatar className="w-9 h-9">
