@@ -4,7 +4,6 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'nottumblr-frontend'
         DOCKER_TAG = "${BUILD_NUMBER}"
-        BACKEND_URL = 'http://18.220.70.231:8081'
     }
 
     stages {
@@ -18,7 +17,7 @@ pipeline {
             // Stop & remove old container if needed
               sh "docker stop ${DOCKER_IMAGE} || true"
               sh "docker rm ${DOCKER_IMAGE} || true"
-              sh "docker run -d -p 81:80 --name ${DOCKER_IMAGE} ${DOCKER_IMAGE}:${DOCKER_TAG}"
+              sh "docker run -d -p 8081:8080 --name ${DOCKER_IMAGE} ${DOCKER_IMAGE}:${DOCKER_TAG}"
           }
         }
     }
