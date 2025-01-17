@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'nottumblr-frontend'
         DOCKER_TAG = "${BUILD_NUMBER}"
-        BACKEND_URL = 'http://18.220.70.231'
+        BACKEND_URL = 'http://18.220.70.231:8081'
     }
 
     stages {

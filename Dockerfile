@@ -1,5 +1,4 @@
 FROM node:22 AS build
-ARG http://18.220.70.231
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
