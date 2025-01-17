@@ -14,7 +14,7 @@ const TopBloggersCard: React.FC = () => {
   const getProfilePictureUrl = (profilePictureKey: string | null | undefined) =>
     profilePictureKey
       ? `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${profilePictureKey}`
-      : "/default-avatar.png";
+      : "/lbj.png";
 
   const handleProfileClick = (username: string) => {
     router.navigate({

@@ -6,7 +6,7 @@ const BUCKET_URL = `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com`;
 
 export function useS3Get() {
   const getImageUrl = useMemo(() => {
-    return (key: string | null | undefined, folder?: string, defaultImage: string = '/default-avatar.png') => {
+    return (key: string | null | undefined, folder?: string, defaultImage: string = '/lbj.png') => {
       if (!key) return defaultImage;
       
       // If the key is already a full URL, return it

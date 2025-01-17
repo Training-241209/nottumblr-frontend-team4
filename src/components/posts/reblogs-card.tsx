@@ -117,7 +117,7 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
               src={getImageUrl(
                 originalPostProfilePictureUrl,
                 "",
-                "/default-avatar.png"
+                "/lbj.png"
               )}
               alt={`${originalPostUsername}'s avatar`}
               className="w-12 h-12 rounded-full object-cover"

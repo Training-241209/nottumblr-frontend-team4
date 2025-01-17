@@ -25,7 +25,7 @@ export function UserAvatar() {
           alt="User Avatar"
           onError={(e) => {
             console.error("Error loading avatar image:", e);
-            e.currentTarget.src = "/default-avatar.png"; // Fallback to default
+            e.currentTarget.src = "/lbj.png"; // Fallback to default
           }}
         />
       )}

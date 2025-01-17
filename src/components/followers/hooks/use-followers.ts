@@ -15,7 +15,7 @@ export function useFollowers(bloggerId: number): UseQueryResult<Follower[]> {
       // Directly return the array since the API returns it in this format
       return response.data.map((follower: Follower) => ({
         username: follower.username,
-        profilePictureUrl: follower.profilePictureUrl || "/default-avatar.png", // fallback for missing images
+        profilePictureUrl: follower.profilePictureUrl || "/lbj.png", // fallback for missing images
       }));
     },
     staleTime: 1000 * 60 * 5, 

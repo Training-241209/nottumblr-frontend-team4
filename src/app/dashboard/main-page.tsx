@@ -37,7 +37,7 @@ const MainPage = memo(({ children }: { children?: React.ReactNode }) => {
   const getProfilePictureUrl = (path: string | undefined) =>
     path
       ? `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${path}`
-      : "/default-avatar.png";
+      : "/lbj.png";
 
   return (
     <SidebarProvider>

@@ -24,7 +24,7 @@ export default function ExplorePage() {
   const constructProfilePictureUrl = (
     key: string | null | undefined
   ): string => {
-    return key ? `${BUCKET_URL}/${key}` : "/default-avatar.png";
+    return key ? `${BUCKET_URL}/${key}` : "/lbj.png";
   };
 
   const fetchFollowStatus = async (bloggerId: number) => {

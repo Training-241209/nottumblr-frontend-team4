@@ -126,7 +126,7 @@ const PostCard: React.FC<PostCardProps> = ({
         >
           <CardHeader className="flex flex-row items-center border-b border-gray-700 p-4 hover:bg-gray-300 dark:hover:bg-gray-700">
             <img
-              src={getImageUrl(profilePictureUrl, "", "/default-avatar.png")}
+              src={getImageUrl(profilePictureUrl, "", "/lbj.png")}
               alt={`${username}'s avatar`}
               className="w-12 h-12 rounded-full object-cover"
             />

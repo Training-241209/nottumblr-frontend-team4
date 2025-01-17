@@ -59,7 +59,7 @@ const TrendingPostCard: React.FC = () => {
             src={getImageUrl(
               trendingPost.profilePictureUrl,
               "",
-              "/default-avatar.png"
+              "/lbj.png"
             )}
             alt={trendingPost.username}
             className="w-8 h-8 rounded-full"
