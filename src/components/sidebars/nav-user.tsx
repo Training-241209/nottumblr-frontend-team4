@@ -1,5 +1,4 @@
 import {
-  Bell,
   ChevronsUpDown,
   LogOut,
   UserRoundPen,

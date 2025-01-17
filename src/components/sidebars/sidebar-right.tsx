@@ -1,6 +1,4 @@
 import * as React from "react";
-import { Search } from "lucide-react";
-import { NavMain } from "@/components/sidebars/nav-main";
 import {
   Sidebar,
   SidebarContent,
@@ -9,40 +7,13 @@ import {
   SidebarMenu,
 } from "@/components/ui/sidebar";
 import CreatePostDialog from "../posts/create-posts-dialog";
-import { useState } from "react";
 import TopBloggersCard from "../posts/top-bloggers-card";
 import TrendingPostCard from "../posts/trending-posts-card";
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Search Nott",
-      onClick: () => {},
-      icon: Search,
-    },
-  ],
-};
 
 export function SidebarRight({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const [items, setItems] = useState<
-    Array<{
-      id: number;
-      creatorName: string;
-      username: string;
-      title: string;
-      body: string;
-      avatarUrl: string;
-      comments: string[];
-    }>
-  >([]);
 
   return (
     <Sidebar

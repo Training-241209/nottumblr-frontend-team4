@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "@/components/auth/hooks/use-auth"; // For user authentication
 import PersonalTimeline from "@/components/timelines/personal-page-timeline"; // Import PersonalTimeline
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import FollowersList from "@/components/followers/followers-list";
 
 const UsersProfile = () => {

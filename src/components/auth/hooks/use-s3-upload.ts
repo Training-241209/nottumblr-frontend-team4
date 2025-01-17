@@ -13,7 +13,6 @@ export function useS3Upload() {
       setIsUploading(true);
 
       // Generate a unique file name
-      const fileExtension = file.name.split(".").pop();
       const fileName = `${folder}/${Date.now()}-${file.name.replace(/\s/g, "_")}`;
 
       // Construct the upload URL

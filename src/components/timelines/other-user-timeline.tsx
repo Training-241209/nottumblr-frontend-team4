@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios-config";
 import PostCard from "../posts/posts-card";
 import ReblogCard from "../posts/reblogs-card";
-import { toast } from "sonner";
 
 interface Post {
   postId: number;
