@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'quizzer-app-frontend'
+        DOCKER_IMAGE = 'nottumblr-frontend'
         DOCKER_TAG = "${BUILD_NUMBER}"
     }
 
