@@ -20,7 +20,7 @@ export default function RegisterPage() {
       </div>
       <div className="relative hidden bg-muted lg:block">
         <img
-          src="/lbj.png"
+          src="/frontpagecover.jpg"
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover"
         />

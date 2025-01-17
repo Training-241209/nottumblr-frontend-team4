@@ -172,6 +172,24 @@ export default function SettingsPage() {
               : "Change Profile Picture"}
           </Button>
         </div>
+        {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75">
+          <div className="relative">
+            <img
+              src={avatar}
+              alt="Full-Size Avatar"
+              className="rounded-lg max-w-full max-h-fit"
+              style={{ width: '300px', height: 'auto' }}
+            />
+            <button
+              onClick={toggleModal}
+              className="absolute top-2 right-2 text-white bg-red-500 rounded-full px-2 py-1"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
       </header>
 
       {/* Personal Information Section */}
