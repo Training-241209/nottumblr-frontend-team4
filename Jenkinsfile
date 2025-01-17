@@ -10,15 +10,26 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                sh "docker images | grep ${DOCKER_IMAGE}"  // Optional debug step
+            }
+        }
+        stage('Clean Port 80') {
+            steps {
+                // Find and remove any container using port 80
+                sh """
+                CONTAINER_ID=$(docker ps --filter "publish=80" --format "{{.ID}}")
+                if [ ! -z "$CONTAINER_ID" ]; then
+                    echo "Stopping container on port 80: $CONTAINER_ID"
+                    docker stop $CONTAINER_ID
+                    docker rm $CONTAINER_ID
+                fi
+                """
             }
         }
         stage('Docker Run') {
             steps {
-                // Stop and remove old container
+                // Stop and remove old container with the same name
                 sh "docker stop ${DOCKER_IMAGE} || true"
                 sh "docker rm ${DOCKER_IMAGE} || true"
-                sh "docker system prune -f || true"
                 // Run new container
                 sh "docker run -d -p 80:80 --name ${DOCKER_IMAGE} ${DOCKER_IMAGE}:${DOCKER_TAG}"
             }
