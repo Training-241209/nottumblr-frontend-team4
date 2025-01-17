@@ -12,14 +12,12 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/components/auth/hooks/use-auth";
 import { useS3Upload } from "@/components/auth/hooks/use-s3-upload";
 import { useCreatePost } from "@/components/posts/hooks/use-create-posts";
 import { useGiphy } from "@/components/posts/hooks/use-giphy";
 import { toast } from "sonner";
 
 const CreatePostDialog: React.FC = () => {
-  const { data: user } = useAuth();
   const { uploadToS3, isUploading } = useS3Upload();
   const { mutate: createPost, status } = useCreatePost();
   const [content, setContent] = useState("");

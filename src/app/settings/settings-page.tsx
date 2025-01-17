@@ -2,7 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth/hooks/use-auth";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useS3Get } from "@/components/auth/hooks/use-s3-get";
 import { useS3Upload } from "@/components/auth/hooks/use-s3-upload";

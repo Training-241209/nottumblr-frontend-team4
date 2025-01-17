@@ -3,7 +3,6 @@ import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
 } from "@/components/ui/card";
 import { Heart, MessageCircle, SendHorizontal, Trash2 } from "lucide-react";
 import { useS3Get } from "@/components/auth/hooks/use-s3-get";
@@ -11,7 +10,6 @@ import { useLikes } from "@/components/posts/hooks/use-likes";
 import { useComments } from "@/components/posts/hooks/use-comments";
 import { useAuth } from "../auth/hooks/use-auth";
 import { useRouter } from "@tanstack/react-router";
-import { useDeleteReblog } from "@/components/posts/hooks/use-delete-reblogs";
 
 
 interface ReblogCardProps {
@@ -36,12 +34,9 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
   originalPostUsername,
   comment,
   rebloggedAt,
-  profilePictureUrl,
   originalPostProfilePictureUrl,
   originalPostMediaUrl,
-  onProfileClick,
   onDelete,
-  currentuser
 }) => {
   const { getImageUrl } = useS3Get();
   const { likeCount, isLiked, currentUserLikeId, addLike, removeLike } =
@@ -50,8 +45,6 @@ const ReblogCard: React.FC<ReblogCardProps> = ({
     comments,
     createComment,
     deleteComment,
-    isAddingComment,
-    isDeletingComment,
   } = useComments(reblogId, "reblog");
 
   const [showComments, setShowComments] = useState(false);

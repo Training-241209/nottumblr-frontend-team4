@@ -1,5 +1,4 @@
 import { createRootRoute, Outlet, useRouter } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { useEffect } from "react";
 import { Toaster } from "sonner";
 

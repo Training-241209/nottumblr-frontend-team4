@@ -21,7 +21,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../auth/hooks/use-auth";
 import { useRouter } from "@tanstack/react-router";
-import { useDeletePost } from "@/components/posts/hooks/use-delete-posts";
 
 interface PostCardProps {
   postId: number;
@@ -48,7 +47,6 @@ const PostCard: React.FC<PostCardProps> = ({
   mediaType,
   createdAt,
   profilePictureUrl,
-  onProfileClick,
   isReblog,
   originalUsername,
   originalPostContent,
@@ -66,9 +64,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const {
     comments,
     createComment,
-    deleteComment,
-    isAddingComment,
-    isDeletingComment,
+    deleteComment
   } = useComments(postId, "post");
 
   const { data: currentUser } = useAuth();

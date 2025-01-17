@@ -1,9 +1,6 @@
 import React from "react";
 import { useFollowers } from "@/components/followers/hooks/use-followers";
-import { useDeleteFollower } from "@/components/followers/hooks/use-delete-followers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
 
 interface FollowersListProps {
   bloggerId: number;
@@ -11,7 +8,6 @@ interface FollowersListProps {
 
 const FollowersList: React.FC<FollowersListProps> = ({ bloggerId }) => {
   const { data: followers = [], isLoading, isError } = useFollowers(bloggerId);
-  const deleteFollowerMutation = useDeleteFollower(bloggerId);
 
   if (isLoading) {
     return <p>Loading followers...</p>;
@@ -25,9 +21,6 @@ const FollowersList: React.FC<FollowersListProps> = ({ bloggerId }) => {
     return <p>No followers yet.</p>;
   }
 
-  const handleDeleteFollower = (username: string) => {
-    deleteFollowerMutation.mutate(username);
-  };
 
   return (
     <ul className="space-y-2">

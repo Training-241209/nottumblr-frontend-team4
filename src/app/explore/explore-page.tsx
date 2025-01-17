@@ -7,7 +7,6 @@ import { useAuth } from "@/components/auth/hooks/use-auth";
 import { axiosInstance } from "@/lib/axios-config";
 import { toast } from "sonner";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Badge } from "@/components/ui/badge";
 import { useRouter } from "@tanstack/react-router";
 
 export default function ExplorePage() {

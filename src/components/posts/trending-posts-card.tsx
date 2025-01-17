@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, MessageCircle, Repeat } from "lucide-react";
+import { Heart, MessageCircle } from "lucide-react";
 import { useRouter } from "@tanstack/react-router";
 
 import { useS3Get } from "@/components/auth/hooks/use-s3-get";

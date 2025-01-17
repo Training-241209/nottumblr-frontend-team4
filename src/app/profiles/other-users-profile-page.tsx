@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/components/auth/hooks/use-auth";
 import { useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -6,8 +6,6 @@ import { axiosInstance } from "@/lib/axios-config";
 import { Button } from "@/components/ui/button";
 import UserTimeline from "@/components/timelines/other-user-timeline";
 import FollowersList from "@/components/followers/followers-list";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { useFollowToggle } from "@/components/followers/hooks/use-followers-follow";
 
 interface UserProfile {
@@ -27,7 +25,6 @@ const OtherUserProfile = () => {
   });
 
   const { data: authUser } = useAuth();
-  const queryClient = useQueryClient();
 
   const BUCKET_NAME = "profilepicturesfbe74-dev";
   const BUCKET_REGION = "us-east-1";
@@ -60,31 +57,7 @@ const OtherUserProfile = () => {
   });
 
   // Follow/Unfollow mutations
-  const followMutation = useMutation({
-    mutationFn: async () => {
-      await axiosInstance.post(`/followers/${user?.bloggerId}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userProfile", username] });
-      toast.success(`You are now following @${user?.username}`);
-    },
-    onError: () => {
-      toast.error("Failed to follow user. Please try again.");
-    },
-  });
 
-  const unfollowMutation = useMutation({
-    mutationFn: async () => {
-      await axiosInstance.delete(`/followers/${user?.bloggerId}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userProfile", username] });
-      toast.success(`You have unfollowed @${user?.username}`);
-    },
-    onError: () => {
-      toast.error("Failed to unfollow user. Please try again.");
-    },
-  });
 
   const { follow, unfollow, isFollowLoading } = useFollowToggle(username || "");
 
