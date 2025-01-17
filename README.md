@@ -17,7 +17,7 @@ Foster creativity and build communities around shared interests, with a focus on
 
 - **Frontend**: React, ShadCN, Tailwind CSS, TanStack Router, TanStack Query
 - **Backend**: Java Spring Boot, Postgres SQL, JWT (JSON Web Tokens)
-- **APIs**: Algolia for search, DummyJSON for mock data, Giphy for GIFs, and AWS S3 for image uploads
+- **APIs**: Algolia for search, DummyJSON for mock data, Giphy for GIFs, and AWS S3 for image uploads.
 
 ---
 
